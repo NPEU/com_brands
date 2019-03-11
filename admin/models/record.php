@@ -11,6 +11,9 @@ defined('_JEXEC') or die;
 
 use Joomla\String\StringHelper;
 
+//jimport('joomla.filesystem.path');
+//JLoader::register('MenusHelper', JPATH_ADMINISTRATOR . '/components/com_menus/helpers/menus.php');
+
 /**
  * BrandProjects Record Model
  */
@@ -188,6 +191,56 @@ class BrandProjectsModelRecord extends JModelAdmin
 				}
 			}
 		}
+        
+        
+        // Need to create a menu item and add the new ID to the data if one doesn't exist:
+        /* https://stackoverflow.com/questions/12651075/programmatically-create-menu-item-in-joomla
+        
+        // Need to act upon the selected menu type in order to generatate the correct link.
+        // This would seem impossible to do to try and support every menu type so may have to
+        // abandon the option to choose the link type here - I think it's too complicated.
+        // Maybe just fall back to creating an unpublished heading, and provide a link to the 
+        // menu item so it can chosen manually.
+        
+        
+        //index.php?option=com_bespoke&view=bespoke
+        //index.php?option=com_content&view=article&id=1668
+        
+        type = 'heading' (link can be empty)
+        
+        if () {
+            
+        }
+        
+        $link = 'index.php?option=com_content&view=article&id='.$resultID,
+        
+        $menuItem = array(
+            'menutype' => 'mainmenu',
+            'title'    => $data['name'],
+            'alias'    => $data['alias'],
+            'path'     =, $data['alias'],
+            'link'     => $link,
+            'type'     => 'component',
+            
+            'component_id' => 22,                  
+            
+            'language' => '*',
+            'published' => 1,
+            'parent_id' => $parent_id,
+            'level' => 1,
+        );
+
+        $menuTable = JTable::getInstance('Menu', 'JTable', array());
+
+        $menuTable->setLocation($parent_id, 'last-child');
+
+        if (!$menuTable->save($menuItem)) {
+            throw new Exception($menuTable->getError());
+            return false;
+        }
+        
+        */
+        
         
         if (parent::save($data)) {
 			/*if (isset($data['featured'])) {

@@ -1,12 +1,25 @@
-Joomla.submitbutton = function(task)
+Joomla.submitbutton = function(task, type)
 {
+    console.log(task);
     if (task == '')
     {
         return false;
     }
+    else if (task == 'item.setType')
+    {
+        //console.log(JSON.parse(atob(type)));
+        var parsed_type = JSON.parse(atob(type));
+        var request = parsed_type.request;
+        var type_string = request.option + '.' + request.view;
+        //jQuery('#item-form input[name="jform[type]"]').val(type);
+        //jQuery('#fieldtype').val('type');
+        //Joomla.submitform('item.setType', document.getElementById('item-form'));
+        jQuery('#jform_landing_menutype').val(type_string);
+        return false;
+    }
     else
     {
-        var isValid=true;
+        var isValid = true;
         var action = task.split('.');
         if (action[1] != 'cancel' && action[1] != 'close')
         {

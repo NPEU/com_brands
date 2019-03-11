@@ -22,6 +22,19 @@ class BrandProjectsController extends JControllerLegacy
     #protected $default_view = 'records';
 
     /**
+	 * Constructor
+	 *
+	 * @param   array  $config  Optional configuration array
+	 *
+	 */
+	public function __construct($config = array())
+	{
+		parent::__construct($config);
+        JLoader::register('MenusHelper', JPATH_ADMINISTRATOR . '/components/com_menus/helpers/menus.php');
+		$this->addModelPath(JPATH_ADMINISTRATOR . '/components/com_menus/models'); 
+	}
+    
+    /**
      * display task
      *
      * @return void

@@ -6,6 +6,7 @@
     <fieldset
         name="main"
         label="COM_BRANDPROJECTS__FIELDSET_MAIN_LABEL"
+        addfieldpath="/administrator/components/com_menus/models/fields"
     >
         <field
             name="id"
@@ -56,6 +57,15 @@
         >
             <option value="">COM_BRANDPROJECTS_CONTACT_DEFAULT</option>
         </field>
+        <field
+            name="landing_menutype"
+            type="menutype"
+            label="COM_BRANDPROJECTS_LANDING_MENU_LABEL"
+            description="COM_BRANDPROJECTS_LANDING_MENU_DESC"
+            class="input-medium"
+            required="true"
+			size="40"
+        />
         <field
             name="primary_colour"
             type="color"
