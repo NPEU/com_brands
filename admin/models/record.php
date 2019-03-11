@@ -207,7 +207,8 @@ class BrandProjectsModelRecord extends JModelAdmin
         //index.php?option=com_content&view=article&id=1668
         
         type = 'heading' (link can be empty)
-        
+        id	menutype	title	alias	note	path	link	type	published	parent_id	level	component_id	checked_out	checked_out_time	browserNav	access	img	template_style_id	params	lft	rgt	home	language	client_id
+        962	mainmenu	Test Placeholder	test-placeholder	""	test-placeholder	""	heading	0	1	1	0	0	29/12/1899	0	1	""	0	"{""menu-anchor_title"":"""",""menu-anchor_css"":"""",""menu_image"":"""",""menu_image_css"":"""",""menu_text"":1,""menu_show"":1}"	1359	1360	0	*	0
         if () {
             
         }
