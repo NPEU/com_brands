@@ -9,11 +9,43 @@
 
 defined('_JEXEC') or die;
 
+use Joomla\String\StringHelper;
+
 /**
  * BrandProjects Record Model
  */
 class BrandProjectsModelRecord extends JModelAdmin
 {
+    /**
+	 * Copied from libraries/src/MVC/Model/AdminModel.php because it uses a hard-coded field name:
+     * catid.
+     * I've used pr_catid to help distiguish from generated/owned content category, but I may
+     * rethink this.
+     * 
+     * Method to change the title & alias.
+	 *
+	 * @param   integer  $category_id  The id of the category.
+	 * @param   string   $alias        The alias.
+	 * @param   string   $title        The title.
+	 *
+	 * @return	array  Contains the modified title and alias.
+	 *
+	 * @since	1.7
+	 */
+	protected function generateNewTitle($category_id, $alias, $title)
+	{
+		// Alter the title & alias
+		$table = $this->getTable();
+
+		while ($table->load(array('alias' => $alias, 'pr_catid' => $category_id)))
+		{
+			$title = StringHelper::increment($title);
+			$alias = StringHelper::increment($alias, 'dash');
+		}
+
+		return array($title, $alias);
+	}
+    
     /**
      * Method to get a table object, load it if necessary.
      *
@@ -23,7 +55,7 @@ class BrandProjectsModelRecord extends JModelAdmin
      *
      * @return  JTable  A JTable object
      */
-    public function getTable($type = 'brandprojects', $prefix = 'BrandProjectsTable', $config = array())
+    public function getTable($type = 'BrandProjects', $prefix = 'BrandProjectsTable', $config = array())
     {
         return JTable::getInstance($type, $prefix, $config);
     }
@@ -75,7 +107,8 @@ class BrandProjectsModelRecord extends JModelAdmin
      */
     public function save($data)
     {
-        $is_new      = empty($data['id']);
+        $is_new = empty($data['id']);
+        $input  = JFactory::getApplication()->input;
         
         // The following is generally useful for any app, but you'll need to make sure the database
         // schema includes these fields:
@@ -88,12 +121,19 @@ class BrandProjectsModelRecord extends JModelAdmin
         $data[$prefix]         = date($date_format, time()); // created/modified
         $data[$prefix . '_by'] = $user_id; // created_by/modified_by
         
+        
+        
+        
+        
+        
+        
+        
         // Get parameters:
         $params = JComponentHelper::getParams(JRequest::getVar('option'));
         
         // By default we're only looking for and acting upon the 'email admins' setting.
         // If any other settings are related to this save method, add them here.
-        $email_admins_string = $params->get('email_admins');
+        /*$email_admins_string = $params->get('email_admins');
         if (!empty($email_admins_string) && $is_new) {
             $email_admins = explode(PHP_EOL, trim($email_admins_string));
             foreach ($email_admins as $email) {
@@ -102,9 +142,62 @@ class BrandProjectsModelRecord extends JModelAdmin
                 $email_data = array('email' => $email);
                 $this->_sendEmail($email_data);
             }
-        }
+        }*/
         
-        return parent::save($data);
+        // Alter the name for save as copy
+		if ($input->get('task') == 'save2copy') {
+			$origTable = clone $this->getTable();
+			$origTable->load($input->getInt('id'));
+           
+			if ($data['name'] == $origTable->name) {
+				list($title, $alias) = $this->generateNewTitle($data['pr_catid'], $data['alias'], $data['name']);
+				$data['name'] = $title;
+				$data['alias'] = $alias;
+                
+                
+			} else {
+				if ($data['alias'] == $origTable->alias) {
+					$data['alias'] = '';
+				}
+			}
+
+			$data['state'] = 0;
+		}
+
+        // Automatic handling of alias for empty fields
+        // Taken from com_content/models/article.php
+		if (in_array($input->get('task'), array('apply', 'save', 'save2new')) && (!isset($data['id']) || (int) $data['id'] == 0)) {
+			if (empty($data['alias'])) {
+				if (JFactory::getConfig()->get('unicodeslugs') == 1) {
+					$data['alias'] = JFilterOutput::stringURLUnicodeSlug($data['name']);
+				} else {
+					$data['alias'] = JFilterOutput::stringURLSafe($data['name']);
+				}
+
+				$table = JTable::getInstance('BrandProjects', 'BrandProjectsTable');
+
+				if ($table->load(array('alias' => $data['alias'], 'pr_catid' => $data['pr_catid']))) {
+					$msg = JText::_('COM_CONTENT_SAVE_WARNING');
+				}
+
+				list($title, $alias) = $this->generateNewTitle($data['pr_catid'], $data['alias'], $data['name']);
+				$data['alias'] = $alias;
+
+				if (isset($msg)) {
+					JFactory::getApplication()->enqueueMessage($msg, 'warning');
+				}
+			}
+		}
+        
+        if (parent::save($data)) {
+			/*if (isset($data['featured'])) {
+				$this->featured($this->getState($this->getName() . '.id'), $data['featured']);
+			}*/
+
+			return true;
+		}
+
+		return false;
     }
     
     /**
@@ -120,8 +213,7 @@ class BrandProjectsModelRecord extends JModelAdmin
             array()
         );
 
-        if (empty($data))
-        {
+        if (empty($data)) {
             $data = $this->getItem();
         }
 

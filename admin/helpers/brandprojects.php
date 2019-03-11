@@ -39,7 +39,7 @@ class BrandProjectsHelper
             $vName == 'records'
         );
         JHtmlSidebar::addEntry(
-            JText::_('COM_BRANDPROJECTS_MANAGER_SUBMENU_CATEGORIES'),
+            JText::_('COM_BRANDPROJECTS_MANAGER_SUBMENU_GROUPS'),
             'index.php?option=com_categories&view=categories&extension=com_brandprojects',
             $vName == 'categories'
         );

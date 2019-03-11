@@ -20,7 +20,7 @@ class BrandProjectsController extends JControllerLegacy
      * @var string
      */
     #protected $default_view = 'records';
-    
+
     /**
      * display task
      *
@@ -29,33 +29,33 @@ class BrandProjectsController extends JControllerLegacy
     public function display($cachable = false, $urlparams = false)
     {
         // Get the document object.
-		$document = JFactory::getDocument();
+        $document = JFactory::getDocument();
 
-		// Set the default view name and format from the Request.
-		$vName   = $this->input->get('view', 'records');
-		$vFormat = $document->getType();
-		$lName   = $this->input->get('layout', 'default', 'string');
+        // Set the default view name and format from the Request.
+        $vName   = $this->input->get('view', 'records');
+        $vFormat = $document->getType();
+        $lName   = $this->input->get('layout', 'default', 'string');
 
-		// Get and render the view.
-		if ($view = $this->getView($vName, $vFormat))
-		{
-			// Get the model for the view.
-			$model = $this->getModel($vName);
+        // Get and render the view.
+        if ($view = $this->getView($vName, $vFormat))
+        {
+            // Get the model for the view.
+            $model = $this->getModel($vName);
 
-			// Push the model into the view (as default).
-			$view->setModel($model, true);
-			$view->setLayout($lName);
+            // Push the model into the view (as default).
+            $view->setModel($model, true);
+            $view->setLayout($lName);
 
-			// Push document object into the view.
-			$view->document = $document;
+            // Push document object into the view.
+            $view->document = $document;
 
-			// Load the submenu.
-			BrandProjectsHelper::addSubmenu($vName);
-			$view->display();
-		}
+            // Load the submenu.
+            BrandProjectsHelper::addSubmenu($vName);
+            $view->display();
+        }
 
-		return $this;
-        
+        return $this;
+
         /*
         // Set default view if not set
         JFactory::getApplication()->input->set('view', JFactory::getApplication()->input->get('view', 'records'));
@@ -68,7 +68,7 @@ class BrandProjectsController extends JControllerLegacy
 
         // Add style
         BrandProjectsHelper::addStyle();
-        
+
         // Set the submenu
         BrandProjectsHelper::addSubmenu(JFactory::getApplication()->input->get('view'));
         */

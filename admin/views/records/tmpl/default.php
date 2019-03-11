@@ -47,10 +47,10 @@ $listDirn  = $this->escape($this->filter_order_Dir);
                     <?php echo JHtml::_('grid.checkall'); ?>
                 </th>
                 <th width="40%">
-                    <?php echo JHtml::_('grid.sort', 'COM_BRANDPROJECTS_RECORDS_TITLE', 'title', $listDirn, $listOrder); ?>
+                    <?php echo JHtml::_('grid.sort', 'COM_BRANDPROJECTS_RECORDS_NAME', 'name', $listDirn, $listOrder); ?>
                 </th>
                 <th width="40%">
-                    <?php echo JHtml::_('grid.sort', 'COM_BRANDPROJECTS_RECORDS_SLUG', 'slug', $listDirn, $listOrder); ?>
+                    <?php echo JHtml::_('grid.sort', 'COM_BRANDPROJECTS_RECORDS_CONTACT', 'contact_user_id', $listDirn, $listOrder); ?>
                 </th>
                 <th width="10%">
                     <?php echo JHtml::_('grid.sort', 'COM_BRANDPROJECTS_PUBLISHED', 'published', $listDirn, $listOrder); ?>
@@ -70,6 +70,7 @@ $listDirn  = $this->escape($this->filter_order_Dir);
         <tbody>  
         <?php foreach ($this->items as $i => $item) :
             $link = JRoute::_('index.php?option=com_brandprojects&task=record.edit&id=' . $item->id);
+            $cat_link = JRoute::_('index.php?option=com_categories&task=category.edit&id=' . $item->pr_catid . '&extension=com_brandprojects');
             $canCheckin = $user->authorise('core.manage', 'com_checkin') || $item->checked_out == $user->get('id') || $item->checked_out == 0;
         ?>
             <tr>
@@ -78,17 +79,22 @@ $listDirn  = $this->escape($this->filter_order_Dir);
                     <?php echo JHtml::_('grid.id', $i, $item->id); ?>
                 </td>
                 <td>
-                    <?php if ($item->checked_out) : ?>
-                        <?php echo JHtml::_('jgrid.checkedout', $i, $item->editor, $item->checked_out_time, 'records.', $canCheckin); ?>
-                    <?php endif; ?>
-                    <a href="<?php echo $link; ?>" title="<?php echo JText::_('COM_BRANDPROJECTS_EDIT_RECORD'); ?>">
-                        <?php echo $item->title; ?>
-                    </a>
+                    <div class="pull-left break-word">
+                        <?php if ($item->checked_out) : ?>
+                            <?php echo JHtml::_('jgrid.checkedout', $i, $item->editor, $item->checked_out_time, 'records.', $canCheckin); ?>
+                        <?php endif; ?>
+                        <a href="<?php echo $link; ?>" class="hasTooltip" title="<?php echo JText::_('COM_BRANDPROJECTS_EDIT_RECORD'); ?>">
+                            <?php echo $item->name; ?>
+                        </a>
+                        <span class="small">(<?php echo JText::_('COM_BRANDPROJECTS_RECORDS_ALIAS'); ?>: <?php echo $item->alias; ?>)</span>
+                        <div class="small">
+                            <?php echo JText::_('COM_BRANDPROJECTS_RECORDS_GROUP'); ?>: <a class="hasTooltip" href="<?php echo $cat_link; ?>" title="<?php echo JText::_('COM_BRANDPROJECTS_EDIT_GROUP'); ?>"><?php echo $item->project_group; ?></a>
+                        </div>
+                
+                    </div>
                 </td>
-                <td>
-                    <a href="<?php echo $link; ?>" title="<?php echo JText::_('COM_BRANDPROJECTS_EDIT_RECORD'); ?>">
-                        <?php echo $item->slug; ?>
-                    </a>
+                <td align="center">
+                    <?php echo $item->contact_user_id; ?>
                 </td>
                 <td align="center">
                     <?php echo JHtml::_('jgrid.published', $item->published, $i, 'records.', true, 'cb'); ?>

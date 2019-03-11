@@ -6,7 +6,11 @@
     <fieldset
         name="main"
         label="COM_BRANDPROJECTS__FIELDSET_MAIN_LABEL"
-    >   
+    >
+        <field
+            name="id"
+            type="hidden"
+        />
         <field
             name="name"
             type="text"
@@ -24,18 +28,41 @@
             size="30"
             label="COM_BRANDPROJECTS_ALIAS_LABEL"
             description="COM_BRANDPROJECTS_ALIAS_DESC"
+            hint="COM_BRANDPROJECTS_ALIAS_HINT"
             filter="string"
-            required="true"
             class=""
             labelclass=""
         />
         <field
-            name="id"
-            type="text"
-            label="COM_BRANDPROJECTS_ID_LABEL"
-            description="COM_BRANDPROJECTS_ID_DESC"
-            readonly="readonly"
-        />        
+            name="pr_catid"
+            type="category"
+            extension="com_brandprojects"
+            class="inputbox"
+            default=""
+            label="COM_BRANDPROJECTS_GROUP_LABEL"
+            description="COM_BRANDPROJECTS_GROUP_DESC"
+            required="true"
+        >
+             <option value="0">JOPTION_SELECT_CATEGORY</option>
+        </field>
+        <field
+            name="contact_user_id"
+            type="staff"
+            label="COM_BRANDPROJECTS_CONTACT_LABEL"
+            description="COM_BRANDPROJECTS_CONTACT_DESC"
+            default="COM_BRANDPROJECTS_CONTACT_DEFAULT"
+            filter="int"
+            class="inputbox"
+        >
+            <option value="">COM_BRANDPROJECTS_CONTACT_DEFAULT</option>
+        </field>
+        <field
+            name="primary_colour"
+            type="color"
+            label="COM_BRANDPROJECTS_PRIMARY_COLOUR_LABEL"
+            description="COM_BRANDPROJECTS_PRIMARY_COLOUR_DESC"
+            required="true"
+        />
         <field name="published" type="list" label="JSTATUS"
             description="JFIELD_PUBLISHED_DESC" class="chzn-color-state"
             filter="intval" size="1" default="1"
@@ -50,31 +77,31 @@
                 JTRASHED</option>
         </field>
     </fieldset>
-    
+
     <fields name="options">
-		<fieldset
-			name="options"
-			label="COM_BRANDPROJECTS__FIELDSET_ADVANCED_LABEL"
-			class="adminform"
-		>
-			<field
-				name="research_terms"
-				type="textarea"
-				rows="10"
-				label="COM_PROJECTS_RESEARCH_TERMS_LABEL"
-				description="COM_PROJECTS_RESEARCH_TERMS_DESC"
-				class="inputbox"
-				default=""
-			/>
-			<field
-				name="long_title"
-				type="textarea"
-				rows="10"
-				label="COM_PROJECTS_LONG_TITLE_LABEL"
-				description="COM_PROJECTS_LONG_TITLE_DESC"
-				class="inputbox"
-				default=""
-			/>
-		</fieldset>
-	</fields>
+        <fieldset
+            name="options"
+            label="COM_BRANDPROJECTS__FIELDSET_ADVANCED_LABEL"
+            class="adminform"
+        >
+            <field
+                name="research_terms"
+                type="textarea"
+                rows="10"
+                label="COM_PROJECTS_RESEARCH_TERMS_LABEL"
+                description="COM_PROJECTS_RESEARCH_TERMS_DESC"
+                class="inputbox"
+                default=""
+            />
+            <field
+                name="long_title"
+                type="textarea"
+                rows="10"
+                label="COM_PROJECTS_LONG_TITLE_LABEL"
+                description="COM_PROJECTS_LONG_TITLE_DESC"
+                class="inputbox"
+                default=""
+            />
+        </fieldset>
+    </fields>
 </form>
