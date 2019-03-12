@@ -22,7 +22,7 @@ class BrandProjectsModelRecord extends JModelAdmin
     /**
 	 * Copied from libraries/src/MVC/Model/AdminModel.php because it uses a hard-coded field name:
      * catid.
-     * I've used pr_catid to help distiguish from generated/owned content category, but I may
+     * I've used pr_catid to help distinguish from generated/owned content category, but I may
      * rethink this.
      * 
      * Method to change the title & alias.
@@ -212,23 +212,35 @@ class BrandProjectsModelRecord extends JModelAdmin
         if () {
             
         }
+        */
+        //$link = 'index.php?option=com_content&view=article&id='.$resultID,
         
-        $link = 'index.php?option=com_content&view=article&id='.$resultID,
+        /*$menuItem = array(
+            'menutype'     => 'mainmenu',
+            'title'        => $data['name'],
+            'alias'        => $data['alias'],
+            'path'         => $data['alias'],
+            'link'         => '',
+            'type'         => 'heading',
+            'published'    => 0,
+            'parent_id'    => 1,
+            'level'        => 1,
+            'component_id' => 0,                  
+            'language'     => '*'
+        );*/
         
         $menuItem = array(
-            'menutype' => 'mainmenu',
-            'title'    => $data['name'],
-            'alias'    => $data['alias'],
-            'path'     =, $data['alias'],
-            'link'     => $link,
-            'type'     => 'component',
-            
+            'menutype'     => 'mainmenu',
+            'title'        => $data['name'],
+            'alias'        => $data['alias'],
+            'path'         => $data['alias'],
+            'link'         => '',
+            'type'         => 'component',
+            'published'    => 0,
+            'parent_id'    => 1,
+            'level'        => 1,
             'component_id' => 22,                  
-            
-            'language' => '*',
-            'published' => 1,
-            'parent_id' => $parent_id,
-            'level' => 1,
+            'language'     => '*'
         );
 
         $menuTable = JTable::getInstance('Menu', 'JTable', array());
@@ -240,7 +252,7 @@ class BrandProjectsModelRecord extends JModelAdmin
             return false;
         }
         
-        */
+        /**/
         
         
         if (parent::save($data)) {

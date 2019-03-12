@@ -7,14 +7,17 @@ Joomla.submitbutton = function(task, type)
     }
     else if (task == 'item.setType')
     {
-        //console.log(JSON.parse(atob(type)));
+        console.log(JSON.parse(atob(type)));
         var parsed_type = JSON.parse(atob(type));
         var request = parsed_type.request;
         var type_string = request.option + '.' + request.view;
         //jQuery('#item-form input[name="jform[type]"]').val(type);
         //jQuery('#fieldtype').val('type');
         //Joomla.submitform('item.setType', document.getElementById('item-form'));
-        jQuery('#jform_landing_menutype').val(type_string);
+        //jQuery('#jform_landing_menutype').val(type_string);
+        jQuery('#jform_landing_menutype').val('Single Article');
+        jQuery('[name="jform[landing_menutype]"]').val('component');
+        jQuery('#jform_component_id').val(22);
         return false;
     }
     else
