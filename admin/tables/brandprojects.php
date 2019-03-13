@@ -22,6 +22,9 @@ class BrandProjectsTablebrandprojects extends JTable
     function __construct(&$db)
     {
         parent::__construct('#__brandprojects', 'id', $db);
+        
+        // Set the alias since the column is called state
+        $this->setColumnAlias('published', 'state');
     }
     /**
      * Overloaded bind function

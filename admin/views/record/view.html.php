@@ -71,7 +71,7 @@ class BrandProjectsViewRecord extends JViewLegacy
         $isNew = ($this->item->id == 0);
         
         // Build the actions for new and existing records.
-		$canDo = $this->canDo;
+        $canDo = $this->canDo;
 
         /*if ($isNew) {
             $title = JText::_('COM_BRANDPROJECTS_MANAGER_RECORD_NEW');
@@ -82,38 +82,38 @@ class BrandProjectsViewRecord extends JViewLegacy
         JToolBarHelper::title($title, 'record');*/
         
         JToolbarHelper::title(
-			JText::_('COM_BRANDPROJECTS_MANAGER_' . ($checkedOut ? 'RECORD_VIEW' : ($isNew ? 'RECORD_ADD' : 'RECORD_EDIT'))),
-			'palette'
-		);
+            JText::_('COM_BRANDPROJECTS_MANAGER_' . ($checkedOut ? 'RECORD_VIEW' : ($isNew ? 'RECORD_ADD' : 'RECORD_EDIT'))),
+            'palette'
+        );
         
         // For new records, check the create permission.
-		if ($isNew && (count($user->getAuthorisedCategories('com_brandprojects', 'core.create')) > 0)) {
-			JToolbarHelper::apply('record.apply');
-			JToolbarHelper::save('record.save');
-			JToolbarHelper::save2new('record.save2new');
-			JToolbarHelper::cancel('record.cancel');
-		} else {
-			// Since it's an existing record, check the edit permission, or fall back to edit own if the owner.
-			$itemEditable = $canDo->get('core.edit') || ($canDo->get('core.edit.own') && $this->item->created_by == $userId);
+        if ($isNew && (count($user->getAuthorisedCategories('com_brandprojects', 'core.create')) > 0)) {
+            JToolbarHelper::apply('record.apply');
+            JToolbarHelper::save('record.save');
+            JToolbarHelper::save2new('record.save2new');
+            JToolbarHelper::cancel('record.cancel');
+        } else {
+            // Since it's an existing record, check the edit permission, or fall back to edit own if the owner.
+            $itemEditable = $canDo->get('core.edit') || ($canDo->get('core.edit.own') && $this->item->created_by == $userId);
 
-			// Can't save the record if it's checked out and editable
-			if (!$checkedOut && $itemEditable) {
-				JToolbarHelper::apply('record.apply');
-				JToolbarHelper::save('record.save');
+            // Can't save the record if it's checked out and editable
+            if (!$checkedOut && $itemEditable) {
+                JToolbarHelper::apply('record.apply');
+                JToolbarHelper::save('record.save');
 
-				// We can save this record, but check the create permission to see if we can return to make a new one.
-				if ($canDo->get('core.create')) {
-					JToolbarHelper::save2new('record.save2new');
-				}
-			}
-			// If checked out, we can still save
-			if ($canDo->get('core.create')) {
-				JToolbarHelper::save2copy('record.save2copy');
-			}
+                // We can save this record, but check the create permission to see if we can return to make a new one.
+                if ($canDo->get('core.create')) {
+                    JToolbarHelper::save2new('record.save2new');
+                }
+            }
+            // If checked out, we can still save
+            if ($canDo->get('core.create')) {
+                JToolbarHelper::save2copy('record.save2copy');
+            }
 
 
-			JToolbarHelper::cancel('record.cancel', 'JTOOLBAR_CLOSE');
-		}
+            JToolbarHelper::cancel('record.cancel', 'JTOOLBAR_CLOSE');
+        }
 
         
         /*if ($isNew && ) {
@@ -122,7 +122,7 @@ class BrandProjectsViewRecord extends JViewLegacy
         }*/
         
         // Render side bar.
-		#$this->sidebar = JHtmlSidebar::render();
+        #$this->sidebar = JHtmlSidebar::render();
     }
     /**
      * Method to set up the document properties

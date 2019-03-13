@@ -5,7 +5,7 @@ Joomla.submitbutton = function(task, type)
     {
         return false;
     }
-    else if (task == 'item.setType')
+    /*else if (task == 'item.setType')
     {
         console.log(JSON.parse(atob(type)));
         var parsed_type = JSON.parse(atob(type));
@@ -19,7 +19,7 @@ Joomla.submitbutton = function(task, type)
         jQuery('[name="jform[landing_menutype]"]').val('component');
         jQuery('#jform_component_id').val(22);
         return false;
-    }
+    }*/
     else
     {
         var isValid = true;

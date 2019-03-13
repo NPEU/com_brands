@@ -64,7 +64,7 @@ class BrandProjectsHelper
             $assetName = 'com_brandprojects';
         }
         else {
-            $assetName = 'com_brandprojects.csvupload.'.(int) $itemId;
+            $assetName = 'com_brandprojects.record.'.(int) $itemId;
         }
 
         $actions = JAccess::getActions('com_brandprojects', 'component');

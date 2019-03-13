@@ -62,22 +62,56 @@ class BrandProjectsViewRecords extends JViewLegacy
      */
     protected function addToolBar()
     {
+        $canDo = BrandProjectsHelper::getActions();
+        $user  = JFactory::getUser();
+        
         $title = JText::_('COM_BRANDPROJECTS_MANAGER_RECORDS');
 
         if ($this->pagination->total) {
             $title .= "<span style='font-size: 0.5em; vertical-align: middle;'> (" . $this->pagination->total . ")</span>";
         }
-
+        
         JToolBarHelper::title($title, 'record');
+        /*
         JToolBarHelper::addNew('record.add');
         if (!empty($this->items)) {
             JToolBarHelper::editList('record.edit');
             JToolBarHelper::deleteList('', 'records.delete');
         }
+        */
+        if ($canDo->get('core.create') || count($user->getAuthorisedCategories('com_brandprojects', 'core.create')) > 0) {
+            JToolbarHelper::addNew('record.add');
+        }
+
+        if ($canDo->get('core.edit') || $canDo->get('core.edit.own'))
+        {
+            JToolbarHelper::editList('record.edit');
+        }
+        
+        if ($canDo->get('core.edit.state'))
+        {
+            JToolbarHelper::publish('records.publish', 'JTOOLBAR_PUBLISH', true);
+            JToolbarHelper::unpublish('records.unpublish', 'JTOOLBAR_UNPUBLISH', true);
+            //JToolbarHelper::custom('record.featured', 'featured.png', 'featured_f2.png', 'JFEATURE', true);
+            //JToolbarHelper::custom('record.unfeatured', 'unfeatured.png', 'featured_f2.png', 'JUNFEATURE', true);
+            //JToolbarHelper::archiveList('record.archive');
+            //JToolbarHelper::checkin('record.checkin');
+        }
+        
+        
+        if ($this->state->get('filter.published') == -2 && $canDo->get('core.delete'))
+        {
+            JToolbarHelper::deleteList('JGLOBAL_CONFIRM_DELETE', 'records.delete', 'JTOOLBAR_EMPTY_TRASH');
+        }
+        elseif ($canDo->get('core.edit.state'))
+        {
+            JToolbarHelper::trash('records.trash');
+        }
+        
         JToolBarHelper::preferences('com_brandprojects');
         
         // Render side bar.
-		$this->sidebar = JHtmlSidebar::render();
+        $this->sidebar = JHtmlSidebar::render();
     }
     /**
      * Method to set up the document properties

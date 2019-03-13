@@ -19,15 +19,14 @@ $listDirn  = $this->escape($this->filter_order_Dir);
 ?>
 <form action="index.php?option=com_brandprojects&view=records" method="post" id="adminForm" name="adminForm">
     <?php if (!empty( $this->sidebar)) : ?>
-	<div id="j-sidebar-container" class="span2">
-		<?php echo $this->sidebar; ?>
-	</div>
-	<div id="j-main-container" class="span10">
+    <div id="j-sidebar-container" class="span2">
+        <?php echo $this->sidebar; ?>
+    </div>
+    <div id="j-main-container" class="span10">
     <?php else : ?>
     <div id="j-main-container">
     <?php endif;?>
 
-    <?php if (!empty($this->items)): ?>
     <div class="row-fluid">
         <div class="span6">
             <?php echo JText::_('COM_BRANDPROJECTS_RECORDS_FILTER'); ?>
@@ -39,6 +38,7 @@ $listDirn  = $this->escape($this->filter_order_Dir);
             ?>
         </div>
     </div>
+    <?php if (!empty($this->items)): ?>
     <table class="table table-striped table-hover">
         <thead>
             <tr>
@@ -53,7 +53,7 @@ $listDirn  = $this->escape($this->filter_order_Dir);
                     <?php echo JHtml::_('grid.sort', 'COM_BRANDPROJECTS_RECORDS_CONTACT', 'contact_user_id', $listDirn, $listOrder); ?>
                 </th>
                 <th width="10%">
-                    <?php echo JHtml::_('grid.sort', 'COM_BRANDPROJECTS_PUBLISHED', 'published', $listDirn, $listOrder); ?>
+                    <?php echo JHtml::_('grid.sort', 'COM_BRANDPROJECTS_PUBLISHED', 'state', $listDirn, $listOrder); ?>
                 </th>
                 <th width="4%">
                     <?php echo JHtml::_('grid.sort', 'COM_BRANDPROJECTS_ID', 'id', $listDirn, $listOrder); ?>
@@ -97,7 +97,7 @@ $listDirn  = $this->escape($this->filter_order_Dir);
                     <?php echo $item->contact_user_id; ?>
                 </td>
                 <td align="center">
-                    <?php echo JHtml::_('jgrid.published', $item->published, $i, 'records.', true, 'cb'); ?>
+                    <?php echo JHtml::_('jgrid.published', $item->state, $i, 'records.', true, 'cb'); ?>
                 </td>
                 <td align="center">
                     <?php echo $item->id; ?>
@@ -107,7 +107,10 @@ $listDirn  = $this->escape($this->filter_order_Dir);
         </tbody>
     </table>
     <?php else: ?>
-    <?php echo JText::_('COM_BRANDPROJECTS_NO_RECORDS'); ?>
+    <div class="alert alert-no-items">
+        <?php echo JText::_('COM_BRANDPROJECTS_NO_RECORDS'); ?>
+    </div>
+    
     <?php endif; ?>
     <input type="hidden" name="task" value=""/>
     <input type="hidden" name="boxchecked" value="0"/>

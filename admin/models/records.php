@@ -29,7 +29,7 @@ class BrandProjectsModelRecords extends JModelList
                 'id',
                 'users_name',
                 'message',
-                'published'
+                'state'
             );
         }
 
@@ -74,16 +74,16 @@ class BrandProjectsModelRecords extends JModelList
             $query->where('bp.alias LIKE ' . $like);
         }
 
-        // Filter by published state
-        $published = $this->getState('filter.published');
+        // Filter by state state
+        $state = $this->getState('filter.published');
 
-        if (is_numeric($published))
+        if (is_numeric($state))
         {
-            $query->where('bp.published = ' . (int) $published);
+            $query->where('bp.state = ' . (int) $state);
         }
-        elseif ($published === '')
+        elseif ($state === '')
         {
-            $query->where('(bp.published IN (0, 1))');
+            $query->where('(bp.state IN (0, 1))');
         }
 
         // Add the list ordering clause.

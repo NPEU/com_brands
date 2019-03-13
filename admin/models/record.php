@@ -20,34 +20,34 @@ use Joomla\String\StringHelper;
 class BrandProjectsModelRecord extends JModelAdmin
 {
     /**
-	 * Copied from libraries/src/MVC/Model/AdminModel.php because it uses a hard-coded field name:
+     * Copied from libraries/src/MVC/Model/AdminModel.php because it uses a hard-coded field name:
      * catid.
      * I've used pr_catid to help distinguish from generated/owned content category, but I may
      * rethink this.
      * 
      * Method to change the title & alias.
-	 *
-	 * @param   integer  $category_id  The id of the category.
-	 * @param   string   $alias        The alias.
-	 * @param   string   $title        The title.
-	 *
-	 * @return	array  Contains the modified title and alias.
-	 *
-	 * @since	1.7
-	 */
-	protected function generateNewTitle($category_id, $alias, $title)
-	{
-		// Alter the title & alias
-		$table = $this->getTable();
+     *
+     * @param   integer  $category_id  The id of the category.
+     * @param   string   $alias        The alias.
+     * @param   string   $title        The title.
+     *
+     * @return  array  Contains the modified title and alias.
+     *
+     * @since   1.7
+     */
+    protected function generateNewTitle($category_id, $alias, $title)
+    {
+        // Alter the title & alias
+        $table = $this->getTable();
 
-		while ($table->load(array('alias' => $alias, 'pr_catid' => $category_id)))
-		{
-			$title = StringHelper::increment($title);
-			$alias = StringHelper::increment($alias, 'dash');
-		}
+        while ($table->load(array('alias' => $alias, 'pr_catid' => $category_id)))
+        {
+            $title = StringHelper::increment($title);
+            $alias = StringHelper::increment($alias, 'dash');
+        }
 
-		return array($title, $alias);
-	}
+        return array($title, $alias);
+    }
     
     /**
      * Method to get a table object, load it if necessary.
@@ -148,49 +148,49 @@ class BrandProjectsModelRecord extends JModelAdmin
         }*/
         
         // Alter the name for save as copy
-		if ($input->get('task') == 'save2copy') {
-			$origTable = clone $this->getTable();
-			$origTable->load($input->getInt('id'));
+        if ($input->get('task') == 'save2copy') {
+            $origTable = clone $this->getTable();
+            $origTable->load($input->getInt('id'));
            
-			if ($data['name'] == $origTable->name) {
-				list($title, $alias) = $this->generateNewTitle($data['pr_catid'], $data['alias'], $data['name']);
-				$data['name'] = $title;
-				$data['alias'] = $alias;
+            if ($data['name'] == $origTable->name) {
+                list($title, $alias) = $this->generateNewTitle($data['pr_catid'], $data['alias'], $data['name']);
+                $data['name'] = $title;
+                $data['alias'] = $alias;
                 
                 
-			} else {
-				if ($data['alias'] == $origTable->alias) {
-					$data['alias'] = '';
-				}
-			}
+            } else {
+                if ($data['alias'] == $origTable->alias) {
+                    $data['alias'] = '';
+                }
+            }
 
-			$data['state'] = 0;
-		}
+            $data['state'] = 0;
+        }
 
         // Automatic handling of alias for empty fields
         // Taken from com_content/models/article.php
-		if (in_array($input->get('task'), array('apply', 'save', 'save2new')) && (!isset($data['id']) || (int) $data['id'] == 0)) {
-			if (empty($data['alias'])) {
-				if (JFactory::getConfig()->get('unicodeslugs') == 1) {
-					$data['alias'] = JFilterOutput::stringURLUnicodeSlug($data['name']);
-				} else {
-					$data['alias'] = JFilterOutput::stringURLSafe($data['name']);
-				}
+        if (in_array($input->get('task'), array('apply', 'save', 'save2new')) && (!isset($data['id']) || (int) $data['id'] == 0)) {
+            if (empty($data['alias'])) {
+                if (JFactory::getConfig()->get('unicodeslugs') == 1) {
+                    $data['alias'] = JFilterOutput::stringURLUnicodeSlug($data['name']);
+                } else {
+                    $data['alias'] = JFilterOutput::stringURLSafe($data['name']);
+                }
 
-				$table = JTable::getInstance('BrandProjects', 'BrandProjectsTable');
+                $table = JTable::getInstance('BrandProjects', 'BrandProjectsTable');
 
-				if ($table->load(array('alias' => $data['alias'], 'pr_catid' => $data['pr_catid']))) {
-					$msg = JText::_('COM_CONTENT_SAVE_WARNING');
-				}
+                if ($table->load(array('alias' => $data['alias'], 'pr_catid' => $data['pr_catid']))) {
+                    $msg = JText::_('COM_CONTENT_SAVE_WARNING');
+                }
 
-				list($title, $alias) = $this->generateNewTitle($data['pr_catid'], $data['alias'], $data['name']);
-				$data['alias'] = $alias;
+                list($title, $alias) = $this->generateNewTitle($data['pr_catid'], $data['alias'], $data['name']);
+                $data['alias'] = $alias;
 
-				if (isset($msg)) {
-					JFactory::getApplication()->enqueueMessage($msg, 'warning');
-				}
-			}
-		}
+                if (isset($msg)) {
+                    JFactory::getApplication()->enqueueMessage($msg, 'warning');
+                }
+            }
+        }
         
         
         // Need to create a menu item and add the new ID to the data if one doesn't exist:
@@ -199,7 +199,7 @@ class BrandProjectsModelRecord extends JModelAdmin
         // Need to act upon the selected menu type in order to generatate the correct link.
         // This would seem impossible to do to try and support every menu type so may have to
         // abandon the option to choose the link type here - I think it's too complicated.
-        // Maybe just fall back to creating an unpublished heading, and provide a link to the 
+        // Maybe just fall back to creating an unstate heading, and provide a link to the 
         // menu item so it can chosen manually.
         
         
@@ -207,63 +207,49 @@ class BrandProjectsModelRecord extends JModelAdmin
         //index.php?option=com_content&view=article&id=1668
         
         type = 'heading' (link can be empty)
-        id	menutype	title	alias	note	path	link	type	published	parent_id	level	component_id	checked_out	checked_out_time	browserNav	access	img	template_style_id	params	lft	rgt	home	language	client_id
-        962	mainmenu	Test Placeholder	test-placeholder	""	test-placeholder	""	heading	0	1	1	0	0	29/12/1899	0	1	""	0	"{""menu-anchor_title"":"""",""menu-anchor_css"":"""",""menu_image"":"""",""menu_image_css"":"""",""menu_text"":1,""menu_show"":1}"	1359	1360	0	*	0
+        id  menutype    title   alias   note    path    link    type    state   parent_id   level   component_id    checked_out checked_out_time    browserNav  access  img template_style_id   params  lft rgt home    language    client_id
+        962 mainmenu    Test Placeholder    test-placeholder    ""  test-placeholder    ""  heading 0   1   1   0   0   29/12/1899  0   1   ""  0   "{""menu-anchor_title"":"""",""menu-anchor_css"":"""",""menu_image"":"""",""menu_image_css"":"""",""menu_text"":1,""menu_show"":1}" 1359    1360    0   *   0
         if () {
             
         }
         */
         //$link = 'index.php?option=com_content&view=article&id='.$resultID,
-        
-        /*$menuItem = array(
-            'menutype'     => 'mainmenu',
-            'title'        => $data['name'],
-            'alias'        => $data['alias'],
-            'path'         => $data['alias'],
-            'link'         => '',
-            'type'         => 'heading',
-            'published'    => 0,
-            'parent_id'    => 1,
-            'level'        => 1,
-            'component_id' => 0,                  
-            'language'     => '*'
-        );*/
-        
-        $menuItem = array(
-            'menutype'     => 'mainmenu',
-            'title'        => $data['name'],
-            'alias'        => $data['alias'],
-            'path'         => $data['alias'],
-            'link'         => '',
-            'type'         => 'component',
-            'published'    => 0,
-            'parent_id'    => 1,
-            'level'        => 1,
-            'component_id' => 22,                  
-            'language'     => '*'
-        );
+        if (empty($data['landing_menu_item_id'])) {
+           $menuItem = array(
+                'menutype'     => 'mainmenu',
+                'title'        => $data['name'],
+                'alias'        => $data['alias'],
+                'path'         => $data['alias'],
+                'link'         => '',
+                'type'         => 'heading',
+                'state'    => 0,
+                'parent_id'    => 1,
+                'level'        => 1,
+                'component_id' => 0,                  
+                'language'     => '*'
+            );
 
-        $menuTable = JTable::getInstance('Menu', 'JTable', array());
+            $menuTable = JTable::getInstance('Menu', 'JTable', array());
 
-        $menuTable->setLocation($parent_id, 'last-child');
+            $menuTable->setLocation($parent_id, 'last-child');
 
-        if (!$menuTable->save($menuItem)) {
-            throw new Exception($menuTable->getError());
-            return false;
+            if (!$menuTable->save($menuItem)) {
+                throw new Exception($menuTable->getError());
+                return false;
+            }
+            
+            $data['landing_menu_item_id'] = $menuTable->id;
         }
-        
-        /**/
-        
-        
+    
         if (parent::save($data)) {
-			/*if (isset($data['featured'])) {
-				$this->featured($this->getState($this->getName() . '.id'), $data['featured']);
-			}*/
+            /*if (isset($data['featured'])) {
+                $this->featured($this->getState($this->getName() . '.id'), $data['featured']);
+            }*/
 
-			return true;
-		}
+            return true;
+        }
 
-		return false;
+        return false;
     }
     
     /**

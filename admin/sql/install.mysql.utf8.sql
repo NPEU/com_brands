@@ -20,7 +20,7 @@ CREATE TABLE `#__brandprojects` (
   `summary` mediumtext CHARACTER SET utf8 COLLATE utf8_unicode_ci NOT NULL,
   `research_terms` mediumtext CHARACTER SET utf8 COLLATE utf8_unicode_ci NOT NULL,
   `params` text CHARACTER SET utf8 COLLATE utf8_unicode_ci NOT NULL,
-  `published` tinyint(1) NOT NULL DEFAULT '0',
+  `state` tinyint(3) NOT NULL DEFAULT '0',
   `created` datetime NOT NULL DEFAULT '0000-00-00 00:00:00',
   `created_by` int(10) NOT NULL DEFAULT '0',
   `modified` datetime NOT NULL DEFAULT '0000-00-00 00:00:00',

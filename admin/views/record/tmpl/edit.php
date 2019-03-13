@@ -36,17 +36,17 @@ $fieldsets = $this->form->getFieldsets();
 <form action="<?php echo JRoute::_('index.php?option=com_brandprojects&layout=edit&id=' . (int) $this->item->id); ?>"
     method="post" name="adminForm" id="adminForm" class="form-validate">
     <div class="row-fluid">
-		<div class="span12 form-horizontal">
+        <div class="span12 form-horizontal">
             <ul class="nav nav-tabs">
-				<?php $i=0; foreach ($fieldsets as $fieldset): $i++; ?>
-				<li<?php echo $i == 1 ? ' class="active"' : ''; ?>><a href="#<?php echo $fieldset->name; ?>" data-toggle="tab"><?php echo JText::_($fieldset->label);?></a></li>
-				<?php endforeach; ?>
-			</ul>
+                <?php $i=0; foreach ($fieldsets as $fieldset): $i++; ?>
+                <li<?php echo $i == 1 ? ' class="active"' : ''; ?>><a href="#<?php echo $fieldset->name; ?>" data-toggle="tab"><?php echo JText::_($fieldset->label);?></a></li>
+                <?php endforeach; ?>
+            </ul>
             <div class="tab-content">
-			<?php $i=0; foreach ($fieldsets as $fieldset): $i++; ?>
-			<?php $form_fieldset = $this->form->getFieldset($fieldset->name); ?>
-				<!-- Begin Tabs -->
-				<div class="tab-pane<?php echo $i == 1 ? ' active' : ''; ?>" id="<?php echo $fieldset->name; ?>">
+            <?php $i=0; foreach ($fieldsets as $fieldset): $i++; ?>
+            <?php $form_fieldset = $this->form->getFieldset($fieldset->name); ?>
+                <!-- Begin Tabs -->
+                <div class="tab-pane<?php echo $i == 1 ? ' active' : ''; ?>" id="<?php echo $fieldset->name; ?>">
                     <div class="row-fluid">
                         <?php if ($fieldset->name == 'main'): ?>
                         <div class="span9"><?php else: ?><div class="span12">
