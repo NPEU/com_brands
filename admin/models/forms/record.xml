@@ -66,7 +66,9 @@
             type="landingmenuitem"
             label="COM_BRANDPROJECTS_LANDING_MENU_ITEM_LABEL"
             description="COM_BRANDPROJECTS_LANDING_MENU_ITEM_DESC"
-        />
+        >
+            <option value="">COM_BRANDPROJECTS_LANDING_MENU_DEFAULT</option>
+        </field>
         <field
             name="primary_colour"
             type="color"
