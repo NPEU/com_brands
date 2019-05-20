@@ -31,9 +31,9 @@ class BrandsController extends JControllerLegacy
     {
         parent::__construct($config);
         //JLoader::register('MenusHelper', JPATH_ADMINISTRATOR . '/components/com_menus/helpers/menus.php');
-        //$this->addModelPath(JPATH_ADMINISTRATOR . '/components/com_menus/models'); 
+        //$this->addModelPath(JPATH_ADMINISTRATOR . '/components/com_menus/models');
     }
-    
+
     /**
      * display task
      *
@@ -62,8 +62,6 @@ class BrandsController extends JControllerLegacy
             // Push document object into the view.
             $view->document = $document;
 
-            // Load the submenu.
-            BrandsHelper::addSubmenu($vName);
             $view->display();
         }
 

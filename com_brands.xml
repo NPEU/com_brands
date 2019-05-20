@@ -38,18 +38,7 @@
     <administration>
         <!-- Administration Menu Section -->
         <menu>COM_BRANDS_MENU</menu>
-		<submenu>
-			<!--
-				Note that all & must be escaped to &amp; for the file to be valid
-				XML and be parsed by the installer
-			-->
-			<menu link="option=com_brands" view="records">
-                COM_BRANDS_SUBMENU_PROEJCTS
-            </menu>
-			<menu link="option=com_categories&amp;extension=com_brands" view="categories">
-                COM_BRANDS_SUBMENU_CATEGORIES
-            </menu>
-		</submenu>
+
         <!-- Administration Main File Copy Section -->
         <!-- Note the folder attribute: This attribute describes the folder
                 to copy FROM in the package to install therefore files copied
