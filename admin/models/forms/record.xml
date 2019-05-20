@@ -56,6 +56,12 @@
             label="COM_BRANDS_TERTIARY_COLOUR_LABEL"
             description="COM_BRANDS_TERTIARY_COLOUR_DESC"
         />
+        <field
+            name="logo_svg"
+            type="textarea"
+            label="COM_BRANDS_LOGO_SVG_LABEL"
+            description="COM_BRANDS_LOGO_SVG_DESC"
+        />
         <field name="state" type="list" label="JSTATUS"
             description="JFIELD_PUBLISHED_DESC" class="chzn-color-state"
             filter="intval" size="1" default="1"
