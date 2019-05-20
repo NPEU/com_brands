@@ -2,14 +2,14 @@
 <config>
     <fieldset
         name="records"
-        label="COM_BRANDPROJECTS_CONFIG_RECORDS_SETTINGS_LABEL"
-        description="COM_BRANDPROJECTS_CONFIG_RECORDS_SETTINGS_DESC"
+        label="COM_BRANDS_CONFIG_RECORDS_SETTINGS_LABEL"
+        description="COM_BRANDS_CONFIG_RECORDS_SETTINGS_DESC"
     >
         <field
             name="email_admins"
             type="textarea"
-            label="COM_BRANDPROJECTS_CONFIG_EMAIL_ADMINS_LABEL"
-            description="COM_BRANDPROJECTS_CONFIG_EMAIL_ADMINS_DESC"
+            label="COM_BRANDS_CONFIG_EMAIL_ADMINS_LABEL"
+            description="COM_BRANDS_CONFIG_EMAIL_ADMINS_DESC"
             cols="50"
             rows="10"
             filter="string"
@@ -22,7 +22,7 @@
     >
 
         <field name="rules" type="rules"
-            component="com_brandprojects"
+            component="com_brands"
             filter="rules"
             validate="rules"
             label="JCONFIG_PERMISSIONS_LABEL"

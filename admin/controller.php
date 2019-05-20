@@ -1,7 +1,7 @@
 <?php
 /**
  * @package     Joomla.Administrator
- * @subpackage  com_brandprojects
+ * @subpackage  com_brands
  *
  * @copyright   Copyright (C) NPEU 2019.
  * @license     MIT License; see LICENSE.md
@@ -10,9 +10,9 @@
 defined('_JEXEC') or die;
 
 /**
- * BrandProjects Component Controller
+ * Brands Component Controller
  */
-class BrandProjectsController extends JControllerLegacy
+class BrandsController extends JControllerLegacy
 {
     /**
      * The default view for the display method.
@@ -63,7 +63,7 @@ class BrandProjectsController extends JControllerLegacy
             $view->document = $document;
 
             // Load the submenu.
-            BrandProjectsHelper::addSubmenu($vName);
+            BrandsHelper::addSubmenu($vName);
             $view->display();
         }
 
@@ -80,10 +80,10 @@ class BrandProjectsController extends JControllerLegacy
         parent::display($cachable, $urlparams);
 
         // Add style
-        BrandProjectsHelper::addStyle();
+        BrandsHelper::addStyle();
 
         // Set the submenu
-        BrandProjectsHelper::addSubmenu(JFactory::getApplication()->input->get('view'));
+        BrandsHelper::addSubmenu(JFactory::getApplication()->input->get('view'));
         */
     }
 }

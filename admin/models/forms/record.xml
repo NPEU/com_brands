@@ -1,11 +1,11 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <form
-    addrulepath="/administrator/components/com_brandprojects/models/rules"
-    addfieldpath="/administrator/components/com_brandprojects/models/fields"
+    addrulepath="/administrator/components/com_brands/models/rules"
+    addfieldpath="/administrator/components/com_brands/models/fields"
 >
     <fieldset
         name="main"
-        label="COM_BRANDPROJECTS__FIELDSET_MAIN_LABEL"
+        label="COM_BRANDS__FIELDSET_MAIN_LABEL"
     >
         <field
             name="id"
@@ -19,8 +19,8 @@
             name="name"
             type="text"
             size="30"
-            label="COM_BRANDPROJECTS_NAME_LABEL"
-            description="COM_BRANDPROJECTS_NAME_DESC"
+            label="COM_BRANDS_NAME_LABEL"
+            description="COM_BRANDS_NAME_DESC"
             filter="string"
             required="true"
             class=""
@@ -30,51 +30,31 @@
             name="alias"
             type="text"
             size="30"
-            label="COM_BRANDPROJECTS_ALIAS_LABEL"
-            description="COM_BRANDPROJECTS_ALIAS_DESC"
-            hint="COM_BRANDPROJECTS_ALIAS_HINT"
+            label="COM_BRANDS_ALIAS_LABEL"
+            description="COM_BRANDS_ALIAS_DESC"
+            hint="COM_BRANDS_ALIAS_HINT"
             filter="string"
             class=""
             labelclass=""
         />
         <field
-            name="pr_catid"
-            type="category"
-            extension="com_brandprojects"
-            class="inputbox"
-            default=""
-            label="COM_BRANDPROJECTS_GROUP_LABEL"
-            description="COM_BRANDPROJECTS_GROUP_DESC"
-            required="true"
-        >
-             <option value="0">JOPTION_SELECT_CATEGORY</option>
-        </field>
-        <field
-            name="contact_user_id"
-            type="staff"
-            label="COM_BRANDPROJECTS_CONTACT_LABEL"
-            description="COM_BRANDPROJECTS_CONTACT_DESC"
-            default="COM_BRANDPROJECTS_CONTACT_DEFAULT"
-            filter="int"
-            class="inputbox"
-            required="true"
-        >
-            <option value="">COM_BRANDPROJECTS_CONTACT_DEFAULT</option>
-        </field>
-        <field
-            name="landing_menu_item_id"
-            type="landingmenuitem"
-            label="COM_BRANDPROJECTS_LANDING_MENU_ITEM_LABEL"
-            description="COM_BRANDPROJECTS_LANDING_MENU_ITEM_DESC"
-        >
-            <option value="">COM_BRANDPROJECTS_LANDING_MENU_DEFAULT</option>
-        </field>
-        <field
             name="primary_colour"
             type="color"
-            label="COM_BRANDPROJECTS_PRIMARY_COLOUR_LABEL"
-            description="COM_BRANDPROJECTS_PRIMARY_COLOUR_DESC"
+            label="COM_BRANDS_PRIMARY_COLOUR_LABEL"
+            description="COM_BRANDS_PRIMARY_COLOUR_DESC"
             required="true"
+        />
+        <field
+            name="secondary_colour"
+            type="color"
+            label="COM_BRANDS_SECONDARY_COLOUR_LABEL"
+            description="COM_BRANDS_SECONDARY_COLOUR_DESC"
+        />
+        <field
+            name="tertiary_colour"
+            type="color"
+            label="COM_BRANDS_TERTIARY_COLOUR_LABEL"
+            description="COM_BRANDS_TERTIARY_COLOUR_DESC"
         />
         <field name="state" type="list" label="JSTATUS"
             description="JFIELD_PUBLISHED_DESC" class="chzn-color-state"
@@ -90,51 +70,4 @@
                 JTRASHED</option>
         </field>
     </fieldset>
-    <fields>
-        <fieldset
-            label="COM_BRANDPROJECTS__FIELDSET_ESCALATED_LABEL"
-            class="adminform"
-            name="escalated"
-        >
-            <field
-                name="secondary_colour"
-                type="color"
-                label="COM_BRANDPROJECTS_SECONDARY_COLOUR_LABEL"
-                description="COM_BRANDPROJECTS_SECONDARY_COLOUR_DESC"
-            />
-            <field
-                name="tertiary_colour"
-                type="color"
-                label="COM_BRANDPROJECTS_TERTIARY_COLOUR_LABEL"
-                description="COM_BRANDPROJECTS_TERTIARY_COLOUR_DESC"
-            />
-        </fieldset>
-    </fields>
-    
-    <fields name="options">
-        <fieldset
-            name="options"
-            label="COM_BRANDPROJECTS__FIELDSET_ADVANCED_LABEL"
-            class="adminform"
-        >
-            <field
-                name="research_terms"
-                type="textarea"
-                rows="10"
-                label="COM_PROJECTS_RESEARCH_TERMS_LABEL"
-                description="COM_PROJECTS_RESEARCH_TERMS_DESC"
-                class="inputbox"
-                default=""
-            />
-            <field
-                name="long_title"
-                type="textarea"
-                rows="10"
-                label="COM_PROJECTS_LONG_TITLE_LABEL"
-                description="COM_PROJECTS_LONG_TITLE_DESC"
-                class="inputbox"
-                default=""
-            />
-        </fieldset>
-    </fields>
 </form>

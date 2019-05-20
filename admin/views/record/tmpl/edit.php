@@ -1,7 +1,7 @@
 <?php
 /**
  * @package     Joomla.Site
- * @subpackage  com_brandprojects
+ * @subpackage  com_brands
  *
  * @copyright   Copyright (C) NPEU 2019.
  * @license     MIT License; see LICENSE.md
@@ -33,7 +33,7 @@ $global_edit_fields = array(
 
 $fieldsets = $this->form->getFieldsets();
 ?>
-<form action="<?php echo JRoute::_('index.php?option=com_brandprojects&layout=edit&id=' . (int) $this->item->id); ?>"
+<form action="<?php echo JRoute::_('index.php?option=com_brands&layout=edit&id=' . (int) $this->item->id); ?>"
     method="post" name="adminForm" id="adminForm" class="form-validate">
     <div class="row-fluid">
         <div class="span12 form-horizontal">

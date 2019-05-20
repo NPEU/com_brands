@@ -1,7 +1,7 @@
 <?php
 /**
  * @package     Joomla.Administrator
- * @subpackage  com_brandprojects
+ * @subpackage  com_brands
  *
  * @copyright   Copyright (C) NPEU 2019.
  * @license     MIT License; see LICENSE.md
@@ -10,12 +10,12 @@
 defined('_JEXEC') or die;
 
 /**
- * BrandProjects Records View
+ * Brands Records View
  */
-class BrandProjectsViewRecords extends JViewLegacy
+class BrandsViewRecords extends JViewLegacy
 {
     /**
-     * Display the BrandProjects view
+     * Display the Brands view
      *
      * @param   string  $tpl  The name of the template file to parse; automatically searches through the template paths.
      *
@@ -26,7 +26,7 @@ class BrandProjectsViewRecords extends JViewLegacy
         
         // Get application
         $app = JFactory::getApplication();
-        $context = "brandprojects.list.admin.record";
+        $context = "brands.list.admin.record";
         // Get data from the model
         $this->items            = $this->get('Items');
         $this->pagination       = $this->get('Pagination');
@@ -62,10 +62,10 @@ class BrandProjectsViewRecords extends JViewLegacy
      */
     protected function addToolBar()
     {
-        $canDo = BrandProjectsHelper::getActions();
+        $canDo = BrandsHelper::getActions();
         $user  = JFactory::getUser();
         
-        $title = JText::_('COM_BRANDPROJECTS_MANAGER_RECORDS');
+        $title = JText::_('COM_BRANDS_MANAGER_RECORDS');
 
         if ($this->pagination->total) {
             $title .= "<span style='font-size: 0.5em; vertical-align: middle;'> (" . $this->pagination->total . ")</span>";
@@ -79,7 +79,7 @@ class BrandProjectsViewRecords extends JViewLegacy
             JToolBarHelper::deleteList('', 'records.delete');
         }
         */
-        if ($canDo->get('core.create') || count($user->getAuthorisedCategories('com_brandprojects', 'core.create')) > 0) {
+        if ($canDo->get('core.create') || count($user->getAuthorisedCategories('com_brands', 'core.create')) > 0) {
             JToolbarHelper::addNew('record.add');
         }
 
@@ -108,7 +108,7 @@ class BrandProjectsViewRecords extends JViewLegacy
             JToolbarHelper::trash('records.trash');
         }
         
-        JToolBarHelper::preferences('com_brandprojects');
+        JToolBarHelper::preferences('com_brands');
         
         // Render side bar.
         $this->sidebar = JHtmlSidebar::render();
@@ -121,6 +121,6 @@ class BrandProjectsViewRecords extends JViewLegacy
     protected function setDocument() 
     {
         $document = JFactory::getDocument();
-        $document->setTitle(JText::_('COM_BRANDPROJECTS_ADMINISTRATION'));
+        $document->setTitle(JText::_('COM_BRANDS_ADMINISTRATION'));
     }
 }

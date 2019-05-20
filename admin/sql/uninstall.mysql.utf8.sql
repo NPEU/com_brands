@@ -1,1 +1,1 @@
-DROP TABLE IF EXISTS `#__brandprojects`;
+DROP TABLE IF EXISTS `#__brands`;

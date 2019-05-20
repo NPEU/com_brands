@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
 <extension type="component" version="3.2.0" method="upgrade">
 
-    <name>COM_BRANDPROJECTS</name>
+    <name>COM_BRANDS</name>
     <author>Andy Kirk</author>
     <authorEmail>andy.kirk@npeu.ox.ac.uk</authorEmail>
     <authorUrl>https://www.npeu.ox.ac.uk</authorUrl>
@@ -12,11 +12,11 @@
     <!--  The version string is recorded in the components table -->
     <version>1.0.0</version>
     <!-- The description is optional and defaults to the name -->
-    <description>COM_BRANDPROJECTS_DESCRIPTION</description>
+    <description>COM_BRANDS_DESCRIPTION</description>
     
     <updateservers>
         <!-- Note: No spaces or linebreaks allowed between the server tags -->
-        <server type="extension" name="NPEU: com_brandprojects Update Site">https://raw.githubusercontent.com/NPEU/com_brandprojects/master/update-manifest.xml</server>
+        <server type="extension" name="NPEU: com_brands Update Site">https://raw.githubusercontent.com/NPEU/com_brands/master/update-manifest.xml</server>
     </updateservers>
 
     <install> <!-- Runs on install -->
@@ -37,17 +37,17 @@
 
     <administration>
         <!-- Administration Menu Section -->
-        <menu>COM_BRANDPROJECTS_MENU</menu>
+        <menu>COM_BRANDS_MENU</menu>
 		<submenu>
 			<!--
 				Note that all & must be escaped to &amp; for the file to be valid
 				XML and be parsed by the installer
 			-->
-			<menu link="option=com_brandprojects" view="records">
-                COM_BRANDPROJECTS_SUBMENU_PROEJCTS
+			<menu link="option=com_brands" view="records">
+                COM_BRANDS_SUBMENU_PROEJCTS
             </menu>
-			<menu link="option=com_categories&amp;extension=com_brandprojects" view="categories">
-                COM_BRANDPROJECTS_SUBMENU_CATEGORIES
+			<menu link="option=com_categories&amp;extension=com_brands" view="categories">
+                COM_BRANDS_SUBMENU_CATEGORIES
             </menu>
 		</submenu>
         <!-- Administration Main File Copy Section -->
@@ -59,7 +59,7 @@
             <filename>access.xml</filename>
             <filename>config.xml</filename>
             <filename>controller.php</filename>
-            <filename>brandprojects.php</filename>
+            <filename>brands.php</filename>
             <filename>index.html</filename>
             <folder>controllers</folder>
             <folder>helpers</folder>

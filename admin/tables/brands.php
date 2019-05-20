@@ -1,7 +1,7 @@
 <?php
 /**
  * @package     Joomla.Administrator
- * @subpackage  com_brandprojects
+ * @subpackage  com_brands
  *
  * @copyright   Copyright (C) NPEU 2019.
  * @license     MIT License; see LICENSE.md
@@ -10,9 +10,9 @@
 defined('_JEXEC') or die;
 
 /**
- * BrandProjects Table class
+ * Brands Table class
  */
-class BrandProjectsTablebrandprojects extends JTable
+class BrandsTablebrands extends JTable
 {
     /**
      * Constructor
@@ -21,7 +21,7 @@ class BrandProjectsTablebrandprojects extends JTable
      */
     function __construct(&$db)
     {
-        parent::__construct('#__brandprojects', 'id', $db);
+        parent::__construct('#__brands', 'id', $db);
         
         // Set the alias since the column is called state
         $this->setColumnAlias('published', 'state');

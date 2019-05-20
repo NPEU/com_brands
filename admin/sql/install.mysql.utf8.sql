@@ -1,6 +1,6 @@
-DROP TABLE IF EXISTS `#__brandprojects`;
+DROP TABLE IF EXISTS `#__brands`;
 
-CREATE TABLE `#__brandprojects` (
+CREATE TABLE `#__brands` (
   `id` int(11) NOT NULL AUTO_INCREMENT,
   `name` varchar(255) CHARACTER SET utf8 COLLATE utf8_unicode_ci NOT NULL,
   `alias` varchar(255) CHARACTER SET utf8 COLLATE utf8_bin NOT NULL,

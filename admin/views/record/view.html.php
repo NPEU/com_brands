@@ -1,7 +1,7 @@
 <?php
 /**
  * @package     Joomla.Administrator
- * @subpackage  com_brandprojects
+ * @subpackage  com_brands
  *
  * @copyright   Copyright (C) NPEU 2019.
  * @license     MIT License; see LICENSE.md
@@ -10,9 +10,9 @@
 defined('_JEXEC') or die;
 
 /**
- * BrandProjects Record View
+ * Brands Record View
  */
-class BrandProjectsViewRecord extends JViewLegacy
+class BrandsViewRecord extends JViewLegacy
 {
     /**
      * View form
@@ -22,7 +22,7 @@ class BrandProjectsViewRecord extends JViewLegacy
     protected $form = null;
 
     /**
-     * Display the BrandProjects view
+     * Display the Brands view
      *
      * @param   string  $tpl  The name of the template file to parse; automatically searches through the template paths.
      *
@@ -34,7 +34,7 @@ class BrandProjectsViewRecord extends JViewLegacy
         $this->form   = $this->get('Form');
         $this->item   = $this->get('Item');
         $this->script = $this->get('Script');
-        $this->canDo  = BrandProjectsHelper::getActions($this->item->id, $this->getModel());
+        $this->canDo  = BrandsHelper::getActions($this->item->id, $this->getModel());
 
         // Check for errors.
         if (count($errors = $this->get('Errors'))) {
@@ -74,20 +74,20 @@ class BrandProjectsViewRecord extends JViewLegacy
         $canDo = $this->canDo;
 
         /*if ($isNew) {
-            $title = JText::_('COM_BRANDPROJECTS_MANAGER_RECORD_NEW');
+            $title = JText::_('COM_BRANDS_MANAGER_RECORD_NEW');
         } else {
-            $title = JText::_('COM_BRANDPROJECTS_MANAGER_RECORD_EDIT');
+            $title = JText::_('COM_BRANDS_MANAGER_RECORD_EDIT');
         }
 
         JToolBarHelper::title($title, 'record');*/
         
         JToolbarHelper::title(
-            JText::_('COM_BRANDPROJECTS_MANAGER_' . ($checkedOut ? 'RECORD_VIEW' : ($isNew ? 'RECORD_ADD' : 'RECORD_EDIT'))),
+            JText::_('COM_BRANDS_MANAGER_' . ($checkedOut ? 'RECORD_VIEW' : ($isNew ? 'RECORD_ADD' : 'RECORD_EDIT'))),
             'palette'
         );
         
         // For new records, check the create permission.
-        if ($isNew && (count($user->getAuthorisedCategories('com_brandprojects', 'core.create')) > 0)) {
+        if ($isNew && (count($user->getAuthorisedCategories('com_brands', 'core.create')) > 0)) {
             JToolbarHelper::apply('record.apply');
             JToolbarHelper::save('record.save');
             JToolbarHelper::save2new('record.save2new');
@@ -133,11 +133,11 @@ class BrandProjectsViewRecord extends JViewLegacy
     {
         $isNew = ($this->item->id < 1);
         $document = JFactory::getDocument();
-        $document->setTitle($isNew ? JText::_('COM_BRANDPROJECTS_RECORD_CREATING') :
-                JText::_('COM_BRANDPROJECTS_RECORD_EDITING'));
+        $document->setTitle($isNew ? JText::_('COM_BRANDS_RECORD_CREATING') :
+                JText::_('COM_BRANDS_RECORD_EDITING'));
         $document->addScript(JURI::root() . $this->script);
-        $document->addScript(JURI::root() . "/administrator/components/com_brandprojects"
+        $document->addScript(JURI::root() . "/administrator/components/com_brands"
                                           . "/views/record/submitbutton.js");
-        JText::script('COM_BRANDPROJECTS_RECORD_ERROR_UNACCEPTABLE');
+        JText::script('COM_BRANDS_RECORD_ERROR_UNACCEPTABLE');
     }
 }

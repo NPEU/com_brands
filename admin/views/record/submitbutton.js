@@ -44,7 +44,7 @@ Joomla.submitbutton = function(task, type)
         }
         else
         {
-            alert(Joomla.JText._('COM_BRANDPROJECTS_RECORD_ERROR_UNACCEPTABLE',
+            alert(Joomla.JText._('COM_BRANDS_RECORD_ERROR_UNACCEPTABLE',
                                  'Some values are unacceptable'));
             return false;
         }

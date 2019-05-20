@@ -1,7 +1,7 @@
 <?php
 /**
  * @package     Joomla.Administrator
- * @subpackage  com_brandprojects
+ * @subpackage  com_brands
  *
  * @copyright   Copyright (C) NPEU 2019.
  * @license     MIT License; see LICENSE.md
@@ -15,9 +15,9 @@ use Joomla\String\StringHelper;
 //JLoader::register('MenusHelper', JPATH_ADMINISTRATOR . '/components/com_menus/helpers/menus.php');
 
 /**
- * BrandProjects Record Model
+ * Brands Record Model
  */
-class BrandProjectsModelRecord extends JModelAdmin
+class BrandsModelRecord extends JModelAdmin
 {
     /**
      * Copied from libraries/src/MVC/Model/AdminModel.php because it uses a hard-coded field name:
@@ -58,7 +58,7 @@ class BrandProjectsModelRecord extends JModelAdmin
      *
      * @return  JTable  A JTable object
      */
-    public function getTable($type = 'BrandProjects', $prefix = 'BrandProjectsTable', $config = array())
+    public function getTable($type = 'Brands', $prefix = 'BrandsTable', $config = array())
     {
         return JTable::getInstance($type, $prefix, $config);
     }
@@ -75,7 +75,7 @@ class BrandProjectsModelRecord extends JModelAdmin
     {
         // Get the form.
         $form = $this->loadForm(
-            'com_brandprojects.record',
+            'com_brands.record',
             'record',
             array(
                 'control' => 'jform',
@@ -177,7 +177,7 @@ class BrandProjectsModelRecord extends JModelAdmin
                     $data['alias'] = JFilterOutput::stringURLSafe($data['name']);
                 }
 
-                $table = JTable::getInstance('BrandProjects', 'BrandProjectsTable');
+                $table = JTable::getInstance('Brands', 'BrandsTable');
 
                 if ($table->load(array('alias' => $data['alias'], 'pr_catid' => $data['pr_catid']))) {
                     $msg = JText::_('COM_CONTENT_SAVE_WARNING');
@@ -261,7 +261,7 @@ class BrandProjectsModelRecord extends JModelAdmin
     {
         // Check the session for previously entered form data.
         $data = JFactory::getApplication()->getUserState(
-            'com_brandprojects.edit.records.data',
+            'com_brands.edit.records.data',
             array()
         );
 
@@ -291,8 +291,8 @@ class BrandProjectsModelRecord extends JModelAdmin
             $mail->addRecipient($email);
             $mail->addReplyTo($mailfrom);
             $mail->setSender(array($mailfrom, $fromname));
-            $mail->setSubject(JText::_('COM_BRANDPROJECTS_EMAIL_ADMINS_SUBJECT'));
-            $mail->setBody(JText::_('COM_BRANDPROJECTS_EMAIL_ADMINS_BODY'));
+            $mail->setSubject(JText::_('COM_BRANDS_EMAIL_ADMINS_SUBJECT'));
+            $mail->setBody(JText::_('COM_BRANDS_EMAIL_ADMINS_BODY'));
             $sent = $mail->Send();
 
             return $sent;

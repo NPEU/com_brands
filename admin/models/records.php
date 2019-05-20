@@ -1,7 +1,7 @@
 <?php
 /**
  * @package     Joomla.Administrator
- * @subpackage  com_brandprojects
+ * @subpackage  com_brands
  *
  * @copyright   Copyright (C) NPEU 2019.
  * @license     MIT License; see LICENSE.md
@@ -10,9 +10,9 @@
 defined('_JEXEC') or die;
 
 /**
- * BrandProjects Records List Model
+ * Brands Records List Model
  */
-class BrandProjectsModelRecords extends JModelList
+class BrandsModelRecords extends JModelList
 {
     /**
      * Constructor.
@@ -49,13 +49,8 @@ class BrandProjectsModelRecords extends JModelList
 
         // Create the base select statement.
         $query->select('bp.*')
-              ->from($db->quoteName('#__brandprojects') . ' AS bp');
-              
-        // Join the categories table again for the project group:
-        $query->select('pc.title AS project_group')
-            ->join('LEFT', '#__categories AS pc ON pc.id = bp.pr_catid');
-              
-              
+              ->from($db->quoteName('#__brands') . ' AS bp');
+               
         // Join over the users for the checked out user.
         $query->select('uc.name AS editor')
             ->join('LEFT', '#__users AS uc ON uc.id=bp.checked_out');
