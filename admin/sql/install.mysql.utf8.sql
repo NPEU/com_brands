@@ -6,7 +6,7 @@ CREATE TABLE `#__brands` (
   `alias` varchar(255) CHARACTER SET utf8 COLLATE utf8_bin NOT NULL,
   `primary_colour` varchar(7) NOT NULL DEFAULT '#000000',
   `secondary_colour` varchar(7) NOT NULL DEFAULT '#000000',
-  `tertiary` varchar(7) NOT NULL DEFAULT '#000000',
+  `tertiary_colour` varchar(7) NOT NULL DEFAULT '#000000',
   `logo_svg` mediumtext CHARACTER SET utf8 COLLATE utf8_unicode_ci NOT NULL,
   `params` text CHARACTER SET utf8 COLLATE utf8_unicode_ci NOT NULL,
   `state` tinyint(3) NOT NULL DEFAULT '0',
