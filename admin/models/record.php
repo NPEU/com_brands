@@ -27,7 +27,6 @@ class BrandsModelRecord extends JModelAdmin
      * 
      * Method to change the title & alias.
      *
-     * @param   integer  $category_id  The id of the category.
      * @param   string   $alias        The alias.
      * @param   string   $title        The title.
      *
@@ -35,12 +34,12 @@ class BrandsModelRecord extends JModelAdmin
      *
      * @since   1.7
      */
-    protected function generateNewTitle($category_id, $alias, $title)
+    protected function generateNewBrandTitle($alias, $title)
     {
         // Alter the title & alias
         $table = $this->getTable();
 
-        while ($table->load(array('alias' => $alias, 'pr_catid' => $category_id)))
+        while ($table->load(array('alias' => $alias)))
         {
             $title = StringHelper::increment($title);
             $alias = StringHelper::increment($alias, 'dash');
@@ -153,7 +152,7 @@ class BrandsModelRecord extends JModelAdmin
             $origTable->load($input->getInt('id'));
            
             if ($data['name'] == $origTable->name) {
-                list($title, $alias) = $this->generateNewTitle($data['pr_catid'], $data['alias'], $data['name']);
+                list($title, $alias) = $this->generateNewBrandTitle($data['pr_catid'], $data['alias'], $data['name']);
                 $data['name'] = $title;
                 $data['alias'] = $alias;
                 
@@ -179,11 +178,11 @@ class BrandsModelRecord extends JModelAdmin
 
                 $table = JTable::getInstance('Brands', 'BrandsTable');
 
-                if ($table->load(array('alias' => $data['alias'], 'pr_catid' => $data['pr_catid']))) {
+                if ($table->load(array('alias' => $data['alias']))) {
                     $msg = JText::_('COM_CONTENT_SAVE_WARNING');
                 }
 
-                list($title, $alias) = $this->generateNewTitle($data['pr_catid'], $data['alias'], $data['name']);
+                list($title, $alias) = $this->generateNewBrandTitle($data['alias'], $data['name']);
                 $data['alias'] = $alias;
 
                 if (isset($msg)) {
@@ -193,54 +192,6 @@ class BrandsModelRecord extends JModelAdmin
         }
         
         
-        // Need to create a menu item and add the new ID to the data if one doesn't exist:
-        /* https://stackoverflow.com/questions/12651075/programmatically-create-menu-item-in-joomla
-        
-        // Need to act upon the selected menu type in order to generatate the correct link.
-        // This would seem impossible to do to try and support every menu type so may have to
-        // abandon the option to choose the link type here - I think it's too complicated.
-        // Maybe just fall back to creating an unstate heading, and provide a link to the 
-        // menu item so it can chosen manually.
-        
-        
-        //index.php?option=com_bespoke&view=bespoke
-        //index.php?option=com_content&view=article&id=1668
-        
-        type = 'heading' (link can be empty)
-        id  menutype    title   alias   note    path    link    type    state   parent_id   level   component_id    checked_out checked_out_time    browserNav  access  img template_style_id   params  lft rgt home    language    client_id
-        962 mainmenu    Test Placeholder    test-placeholder    ""  test-placeholder    ""  heading 0   1   1   0   0   29/12/1899  0   1   ""  0   "{""menu-anchor_title"":"""",""menu-anchor_css"":"""",""menu_image"":"""",""menu_image_css"":"""",""menu_text"":1,""menu_show"":1}" 1359    1360    0   *   0
-        if () {
-            
-        }
-        */
-        //$link = 'index.php?option=com_content&view=article&id='.$resultID,
-        if (empty($data['landing_menu_item_id'])) {
-           $menuItem = array(
-                'menutype'     => 'mainmenu',
-                'title'        => $data['name'],
-                'alias'        => $data['alias'],
-                'path'         => $data['alias'],
-                'link'         => '',
-                'type'         => 'heading',
-                'state'    => 0,
-                'parent_id'    => 1,
-                'level'        => 1,
-                'component_id' => 0,                  
-                'language'     => '*'
-            );
-
-            $menuTable = JTable::getInstance('Menu', 'JTable', array());
-
-            $menuTable->setLocation($parent_id, 'last-child');
-
-            if (!$menuTable->save($menuItem)) {
-                throw new Exception($menuTable->getError());
-                return false;
-            }
-            
-            $data['landing_menu_item_id'] = $menuTable->id;
-        }
-    
         if (parent::save($data)) {
             /*if (isset($data['featured'])) {
                 $this->featured($this->getState($this->getName() . '.id'), $data['featured']);

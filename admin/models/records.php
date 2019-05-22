@@ -27,8 +27,6 @@ class BrandsModelRecords extends JModelList
         {
             $config['filter_fields'] = array(
                 'id',
-                'users_name',
-                'message',
                 'state'
             );
         }
@@ -50,15 +48,12 @@ class BrandsModelRecords extends JModelList
         // Create the base select statement.
         $query->select('bp.*')
               ->from($db->quoteName('#__brands') . ' AS bp');
-               
+
         // Join over the users for the checked out user.
         $query->select('uc.name AS editor')
             ->join('LEFT', '#__users AS uc ON uc.id=bp.checked_out');
 
-        // Join the categories table:
-        /*$query->select('c.title AS category_title')
-            ->join('LEFT', '#__categories AS c ON c.id = p.catid');    */
-            
+
         // Filter: like / search
         $search = $this->getState('filter.search');
 

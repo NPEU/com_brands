@@ -61,7 +61,6 @@ $listDirn  = $this->escape($this->filter_order_Dir);
             <tbody>
             <?php foreach ($this->items as $i => $item) :
                 $link = JRoute::_('index.php?option=com_brands&task=record.edit&id=' . $item->id);
-                $cat_link = JRoute::_('index.php?option=com_categories&task=category.edit&id=' . $item->pr_catid . '&extension=com_brands');
                 $canCheckin = $user->authorise('core.manage', 'com_checkin') || $item->checked_out == $user->get('id') || $item->checked_out == 0;
             ?>
                 <tr>

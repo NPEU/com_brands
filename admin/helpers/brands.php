@@ -47,16 +47,6 @@ class BrandsHelper
             $result->set($action->name, $user->authorise($action->name, $assetName));
         }
 
-        // Check if user belongs to assigned category and permit edit if so:
-        if ($model) {
-            $item  = $model->getItem($itemId);
-
-            if (!!($user->authorise('core.edit', 'com_brands')
-            || $user->authorise('core.edit', 'com_content.category.' . $item->catid))) {
-                $result->set('core.edit', true);
-            }
-        }
-
         return $result;
     }
 }

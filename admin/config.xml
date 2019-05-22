@@ -1,21 +1,5 @@
 <?xml version="1.0" encoding="utf-8"?>
-<config>
-    <fieldset
-        name="records"
-        label="COM_BRANDS_CONFIG_RECORDS_SETTINGS_LABEL"
-        description="COM_BRANDS_CONFIG_RECORDS_SETTINGS_DESC"
-    >
-        <field
-            name="email_admins"
-            type="textarea"
-            label="COM_BRANDS_CONFIG_EMAIL_ADMINS_LABEL"
-            description="COM_BRANDS_CONFIG_EMAIL_ADMINS_DESC"
-            cols="50"
-            rows="10"
-            filter="string"
-        />
-    </fieldset>
-    
+<config>    
     <fieldset name="permissions"
         description="JCONFIG_PERMISSIONS_DESC"
         label="JCONFIG_PERMISSIONS_LABEL"

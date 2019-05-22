@@ -61,6 +61,7 @@
             type="textarea"
             label="COM_BRANDS_LOGO_SVG_LABEL"
             description="COM_BRANDS_LOGO_SVG_DESC"
+            filter="raw"
         />
         <field name="state" type="list" label="JSTATUS"
             description="JFIELD_PUBLISHED_DESC" class="chzn-color-state"
