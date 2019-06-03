@@ -6,7 +6,6 @@
  * @copyright   Copyright (C) NPEU 2019.
  * @license     MIT License; see LICENSE.md
  */
-ini_set('display_errors', 'on');
 defined('_JEXEC') or die;
 
 JHtml::_('behavior.tooltip');
