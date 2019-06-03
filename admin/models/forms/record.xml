@@ -5,7 +5,7 @@
 >
     <fieldset
         name="main"
-        label="COM_BRANDS__FIELDSET_MAIN_LABEL"
+        label="COM_BRANDS_FIELDSET_MAIN_LABEL"
     >
         <field
             name="id"
