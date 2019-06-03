@@ -6,6 +6,7 @@
  * @copyright   Copyright (C) NPEU 2019.
  * @license     MIT License; see LICENSE.md
  */
+
 defined('_JEXEC') or die;
 
 JHtml::_('behavior.tooltip');
