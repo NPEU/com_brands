@@ -19,35 +19,7 @@ use Joomla\String\StringHelper;
  */
 class BrandsModelRecord extends JModelAdmin
 {
-    /**
-     * Copied from libraries/src/MVC/Model/AdminModel.php because it uses a hard-coded field name:
-     * catid.
-     * I've used pr_catid to help distinguish from generated/owned content category, but I may
-     * rethink this.
-     * 
-     * Method to change the title & alias.
-     *
-     * @param   string   $alias        The alias.
-     * @param   string   $title        The title.
-     *
-     * @return  array  Contains the modified title and alias.
-     *
-     * @since   1.7
-     */
-    protected function generateNewBrandTitle($alias, $title)
-    {
-        // Alter the title & alias
-        $table = $this->getTable();
 
-        while ($table->load(array('alias' => $alias)))
-        {
-            $title = StringHelper::increment($title);
-            $alias = StringHelper::increment($alias, 'dash');
-        }
-
-        return array($title, $alias);
-    }
-    
     /**
      * Method to get a table object, load it if necessary.
      *
