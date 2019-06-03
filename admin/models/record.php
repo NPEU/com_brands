@@ -95,13 +95,6 @@ class BrandsModelRecord extends JModelAdmin
         $data[$prefix]         = date($date_format, time()); // created/modified
         $data[$prefix . '_by'] = $user_id; // created_by/modified_by
         
-        
-        
-        
-        
-        
-        
-        
         // Get parameters:
         $params = JComponentHelper::getParams(JRequest::getVar('option'));
         
