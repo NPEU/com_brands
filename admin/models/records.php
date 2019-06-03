@@ -68,7 +68,7 @@ class BrandsModelRecords extends JModelList
             $query->where('b.alias LIKE ' . $like);
         }
 
-        // Filter by state state
+        // Filter by state
         $state = $this->getState('filter.published');
 
         if (is_numeric($state))
