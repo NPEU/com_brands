@@ -110,6 +110,9 @@ class BrandsViewRecords extends JViewLegacy
         
         JToolBarHelper::preferences('com_brands');
         
+         // Render side bar.
+		$this->sidebar = JHtmlSidebar::render();
+        
     }
     /**
      * Method to set up the document properties

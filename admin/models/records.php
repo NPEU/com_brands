@@ -46,12 +46,16 @@ class BrandsModelRecords extends JModelList
         $query = $db->getQuery(true);
 
         // Create the base select statement.
-        $query->select('bp.*')
-              ->from($db->quoteName('#__brands') . ' AS bp');
+        $query->select('b.*')
+              ->from($db->quoteName('#__brands') . ' AS b');
+
+        // Join the categories table again for the project group:
+        $query->select('c.title AS category')
+            ->join('LEFT', '#__categories AS c ON c.id = b.catid');
 
         // Join over the users for the checked out user.
-        $query->select('uc.name AS editor')
-            ->join('LEFT', '#__users AS uc ON uc.id=bp.checked_out');
+        $query->select('u.name AS editor')
+            ->join('LEFT', '#__users AS u ON u.id=b.checked_out');
 
 
         // Filter: like / search
@@ -60,8 +64,8 @@ class BrandsModelRecords extends JModelList
         if (!empty($search))
         {
             $like = $db->quote('%' . $search . '%');
-            $query->where('bp.name LIKE ' . $like);
-            $query->where('bp.alias LIKE ' . $like);
+            $query->where('b.name LIKE ' . $like);
+            $query->where('b.alias LIKE ' . $like);
         }
 
         // Filter by state state
@@ -69,15 +73,15 @@ class BrandsModelRecords extends JModelList
 
         if (is_numeric($state))
         {
-            $query->where('bp.state = ' . (int) $state);
+            $query->where('b.state = ' . (int) $state);
         }
         elseif ($state === '')
         {
-            $query->where('(bp.state IN (0, 1))');
+            $query->where('(b.state IN (0, 1))');
         }
 
         // Add the list ordering clause.
-        $orderCol   = $this->state->get('list.ordering', 'bp.name');
+        $orderCol   = $this->state->get('list.ordering', 'b.name');
         $orderDirn  = $this->state->get('list.direction', 'asc');
 
         $query->order($db->escape($orderCol) . ' ' . $db->escape($orderDirn));

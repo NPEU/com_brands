@@ -24,6 +24,32 @@ class BrandsHelper
 
         $document->addStyleDeclaration('.icon-record:before {content: "\e014";}');
     }
+    
+    /**
+     * Configure the Submenu.
+     *
+     * @param   string  The name of the active view.
+     */
+    public static function addSubmenu($vName = 'records')
+    {
+        #echo $vName;
+        JHtmlSidebar::addEntry(
+            JText::_('COM_BRANDS_MANAGER_SUBMENU_BRANDS'),
+            'index.php?option=com_brands&view=records',
+            $vName == 'records'
+        );
+        JHtmlSidebar::addEntry(
+            JText::_('COM_BRANDS_MANAGER_SUBMENU_CATEGORIES'),
+            'index.php?option=com_categories&view=categories&extension=com_brands',
+            $vName == 'categories'
+        );
+        
+        /* This seems to get overridden:
+        if ($vName == 'categories') {
+            JFactory::getDocument()->setTitle(JText::_('COM_BRANDPROJECTS_MANAGER_SUBMENU_CATEGORIES'));
+        }
+        */
+    }
 
     /**
      * Get the actions
@@ -45,6 +71,16 @@ class BrandsHelper
 
         foreach ($actions as $action) {
             $result->set($action->name, $user->authorise($action->name, $assetName));
+        }
+        
+        // Check if user belongs to assigned category and permit edit if so:
+        if ($model) {
+            $item  = $model->getItem($itemId);
+
+            if (!!($user->authorise('core.edit', 'com_brands')
+            || $user->authorise('core.edit', 'com_content.category.' . $item->catid))) {
+                $result->set('core.edit', true);
+            }
         }
 
         return $result;

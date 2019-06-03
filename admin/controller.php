@@ -30,8 +30,8 @@ class BrandsController extends JControllerLegacy
     public function __construct($config = array())
     {
         parent::__construct($config);
-        //JLoader::register('MenusHelper', JPATH_ADMINISTRATOR . '/components/com_menus/helpers/menus.php');
-        //$this->addModelPath(JPATH_ADMINISTRATOR . '/components/com_menus/models');
+        JLoader::register('MenusHelper', JPATH_ADMINISTRATOR . '/components/com_menus/helpers/menus.php');
+        $this->addModelPath(JPATH_ADMINISTRATOR . '/components/com_menus/models');
     }
 
     /**
@@ -61,13 +61,19 @@ class BrandsController extends JControllerLegacy
 
             // Push document object into the view.
             $view->document = $document;
+            
+            // Add style
+            BrandsHelper::addStyle();
 
-            $view->display();
+            // Load the submenu.
+			BrandsHelper::addSubmenu($vName);
+            
+			$view->display();
         }
 
         return $this;
-
         /*
+        
         // Set default view if not set
         JFactory::getApplication()->input->set('view', JFactory::getApplication()->input->get('view', 'records'));
 
@@ -83,5 +89,6 @@ class BrandsController extends JControllerLegacy
         // Set the submenu
         BrandsHelper::addSubmenu(JFactory::getApplication()->input->get('view'));
         */
+        
     }
 }

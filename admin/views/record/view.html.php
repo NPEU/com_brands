@@ -62,30 +62,22 @@ class BrandsViewRecord extends JViewLegacy
     {
         // Hide Joomla Administrator Main menu:
         JFactory::getApplication()->input->set('hidemainmenu', true);
-        
+
         $user       = JFactory::getUser();
         $userId     = $user->id;
 
 
         $checkedOut = !($this->item->checked_out == 0 || $this->item->checked_out == $userId);
         $isNew = ($this->item->id == 0);
-        
+
         // Build the actions for new and existing records.
         $canDo = $this->canDo;
 
-        /*if ($isNew) {
-            $title = JText::_('COM_BRANDS_MANAGER_RECORD_NEW');
-        } else {
-            $title = JText::_('COM_BRANDS_MANAGER_RECORD_EDIT');
-        }
-
-        JToolBarHelper::title($title, 'record');*/
-        
         JToolbarHelper::title(
             JText::_('COM_BRANDS_MANAGER_' . ($checkedOut ? 'RECORD_VIEW' : ($isNew ? 'RECORD_ADD' : 'RECORD_EDIT'))),
             'palette'
         );
-        
+
         // For new records, check the create permission.
         if ($isNew && (count($user->getAuthorisedCategories('com_brands', 'core.create')) > 0)) {
             JToolbarHelper::apply('record.apply');
@@ -115,13 +107,13 @@ class BrandsViewRecord extends JViewLegacy
             JToolbarHelper::cancel('record.cancel', 'JTOOLBAR_CLOSE');
         }
 
-        
+
         /*if ($isNew && ) {
-            
-            
+
+
         }*/
-        
-        // Render side bar.
+
+        // Render side bar (no, not on item view).
         #$this->sidebar = JHtmlSidebar::render();
     }
     /**
@@ -129,7 +121,7 @@ class BrandsViewRecord extends JViewLegacy
      *
      * @return void
      */
-    protected function setDocument() 
+    protected function setDocument()
     {
         $isNew = ($this->item->id < 1);
         $document = JFactory::getDocument();

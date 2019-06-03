@@ -4,6 +4,7 @@ CREATE TABLE `#__brands` (
   `id` int(11) NOT NULL AUTO_INCREMENT,
   `name` varchar(255) CHARACTER SET utf8 COLLATE utf8_unicode_ci NOT NULL,
   `alias` varchar(255) CHARACTER SET utf8 COLLATE utf8_bin NOT NULL,
+  `catid` int(11) NOT NULL DEFAULT '0',
   `primary_colour` varchar(7) NOT NULL DEFAULT '#000000',
   `secondary_colour` varchar(7) NOT NULL DEFAULT '#000000',
   `tertiary_colour` varchar(7) NOT NULL DEFAULT '#000000',

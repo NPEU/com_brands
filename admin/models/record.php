@@ -152,7 +152,7 @@ class BrandsModelRecord extends JModelAdmin
             $origTable->load($input->getInt('id'));
            
             if ($data['name'] == $origTable->name) {
-                list($title, $alias) = $this->generateNewBrandTitle($data['pr_catid'], $data['alias'], $data['name']);
+                list($title, $alias) = $this->generateNewBrandTitle($data['catid'], $data['alias'], $data['name']);
                 $data['name'] = $title;
                 $data['alias'] = $alias;
                 

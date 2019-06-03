@@ -19,7 +19,14 @@ $listDirn  = $this->escape($this->filter_order_Dir);
 ?>
 <form action="index.php?option=com_brands&view=records" method="post" id="adminForm" name="adminForm">
 
+        <?php if (!empty( $this->sidebar)) : ?>
+        <div id="j-sidebar-container" class="span2">
+            <?php echo $this->sidebar; ?>
+        </div>
+        <div id="j-main-container" class="span10">
+        <?php else : ?>
         <div id="j-main-container">
+        <?php endif;?>
 
         <div class="row-fluid">
             <div class="span6">
@@ -61,6 +68,7 @@ $listDirn  = $this->escape($this->filter_order_Dir);
             <tbody>
             <?php foreach ($this->items as $i => $item) :
                 $link = JRoute::_('index.php?option=com_brands&task=record.edit&id=' . $item->id);
+                $cat_link = JRoute::_('index.php?option=com_categories&task=category.edit&id=' . $item->catid . '&extension=com_brands');
                 $canCheckin = $user->authorise('core.manage', 'com_checkin') || $item->checked_out == $user->get('id') || $item->checked_out == 0;
             ?>
                 <tr>
@@ -77,7 +85,9 @@ $listDirn  = $this->escape($this->filter_order_Dir);
                                 <?php echo $item->name; ?>
                             </a>
                             <span class="small">(<?php echo JText::_('COM_BRANDS_RECORDS_ALIAS'); ?>: <?php echo $item->alias; ?>)</span>
-
+                            <div class="small">
+                                <?php echo JText::_('COM_BRANDS_RECORDS_CATEGORY'); ?>: <a class="hasTooltip" href="<?php echo $cat_link; ?>" title="<?php echo JText::_('COM_BRANDS_EDIT_CATEGORY'); ?>"><?php echo $item->category; ?></a>
+                            </div>
                         </div>
                     </td>
                     <td align="center">

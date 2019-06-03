@@ -38,6 +38,18 @@
             labelclass=""
         />
         <field
+            name="catid"
+            type="category"
+            extension="com_brands"
+            class="inputbox"
+            default=""
+            label="COM_BRANDS_CATEGORY_LABEL"
+            description="COM_BRANDS_CATEGORY_DESC"
+            required="true"
+            >
+             <option value="0">JOPTION_SELECT_CATEGORY</option>
+        </field>
+        <field
             name="primary_colour"
             type="color"
             label="COM_BRANDS_PRIMARY_COLOUR_LABEL"
