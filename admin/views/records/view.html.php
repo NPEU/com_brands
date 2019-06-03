@@ -42,8 +42,6 @@ class BrandsViewRecords extends JViewLegacy
 
             return false;
         }
-        
-        
 
         // Set the toolbar and number of found items
         $this->addToolBar();
@@ -110,9 +108,8 @@ class BrandsViewRecords extends JViewLegacy
         
         JToolBarHelper::preferences('com_brands');
         
-         // Render side bar.
-		$this->sidebar = JHtmlSidebar::render();
-        
+        // Render side bar.
+		$this->sidebar = JHtmlSidebar::render();       
     }
     /**
      * Method to set up the document properties
