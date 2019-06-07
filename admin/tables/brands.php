@@ -26,6 +26,7 @@ class BrandsTablebrands extends JTable
         // Set the alias since the column is called state
         $this->setColumnAlias('published', 'state');
     }
+    
     /**
      * Overloaded bind function
      *

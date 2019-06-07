@@ -58,6 +58,18 @@ class BrandsModelRecords extends JModelList
             ->join('LEFT', '#__users AS u ON u.id=b.checked_out');
 
 
+        // Filter by a single or group of categories.
+        $categoryId = $this->getState('filter.category_id');
+
+        if (is_numeric($categoryId))
+        {
+            $query->where($db->quoteName('b.catid') . ' = ' . (int) $categoryId);
+        }
+        elseif (is_array($categoryId))
+        {
+            $query->where($db->quoteName('b.catid') . ' IN (' . implode(',', ArrayHelper::toInteger($categoryId)) . ')');
+        }
+
         // Filter: like / search
         $search = $this->getState('filter.search');
 
