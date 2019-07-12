@@ -53,8 +53,6 @@ class BrandsControllerRecord extends JControllerForm
         $recordId = $this->input->getInt($urlVar);
         // End SNIP
 
-        #echo '<pre>'; var_dump($files); echo '</pre>'; exit;
-        #echo '<pre>'; var_dump($data); echo '</pre>'; exit;
         $favicon_filename =  $files['favion_zip']['name'];
 
         if(!empty($favicon_filename)) {
@@ -76,9 +74,6 @@ class BrandsControllerRecord extends JControllerForm
 
             $accept_types = explode(',', str_replace(', ', ',', $form->getFieldAttribute('favion_zip', 'accept')));
 
-            #echo '<pre>'; var_dump($files); echo '</pre>'; #exit;
-            #echo '<pre>'; var_dump($accept_types); echo '</pre>'; exit;
-
             if (in_array($files['favion_zip']['type'], $accept_types)) {
 
                 #$favicon_zip_upload_root_folder = trim($params->get('favicon_zip_upload_folder'), '/');
@@ -87,17 +82,12 @@ class BrandsControllerRecord extends JControllerForm
                 $brand_favicon_folder = $favicon_zip_upload_root_folder . '/' . $brand_pathname . '/';
                 $dest_folder = $_SERVER['DOCUMENT_ROOT'] . '/' . $brand_favicon_folder;
 
-                #echo '<pre>'; var_dump($favicon_filename); echo '</pre>'; exit;
-
                 if (!file_exists($dest_folder)) {
                     mkdir($dest_folder);
                 }
 
                 $src  = $files['favion_zip']['tmp_name'];
                 $dest = $dest_folder . $favicon_filename;
-
-                #echo '<pre>'; var_dump($src); echo '</pre>'; #exit;
-                #echo '<pre>'; var_dump($dest); echo '</pre>'; exit;
 
                 $data['favicon_zip_path'] = '/' . $brand_favicon_folder . $favicon_filename;
 
@@ -118,6 +108,7 @@ class BrandsControllerRecord extends JControllerForm
                     }
 
                     // Add binary to data:
+                    // @TODO - still undecided about this
 
 
                     // Add success message:

@@ -19,7 +19,35 @@ use Joomla\String\StringHelper;
  */
 class BrandsModelRecord extends JModelAdmin
 {
+    /**
+     * Copied from libraries/src/MVC/Model/AdminModel.php because it uses a hard-coded field name:
+     * catid.
+     * I've used pr_catid to help distinguish from generated/owned content category, but I may
+     * rethink this.
+     * 
+     * Method to change the title & alias.
+     *
+     * @param   string   $alias        The alias.
+     * @param   string   $title        The title.
+     *
+     * @return  array  Contains the modified title and alias.
+     *
+     * @since   1.7
+     */
+    protected function generateNewBrandTitle($alias, $title)
+    {
+        // Alter the title & alias
+        $table = $this->getTable();
 
+        while ($table->load(array('alias' => $alias)))
+        {
+            $title = StringHelper::increment($title);
+            $alias = StringHelper::increment($alias, 'dash');
+        }
+
+        return array($title, $alias);
+    }
+    
     /**
      * Method to get a table object, load it if necessary.
      *
@@ -95,6 +123,13 @@ class BrandsModelRecord extends JModelAdmin
         $data[$prefix]         = date($date_format, time()); // created/modified
         $data[$prefix . '_by'] = $user_id; // created_by/modified_by
         
+        
+        
+        
+        
+        
+        
+        
         // Get parameters:
         $params = JComponentHelper::getParams(JRequest::getVar('option'));
         
@@ -133,7 +168,8 @@ class BrandsModelRecord extends JModelAdmin
 
         // Automatic handling of alias for empty fields
         // Taken from com_content/models/article.php
-        if (in_array($input->get('task'), array('apply', 'save', 'save2new')) && (!isset($data['id']) || (int) $data['id'] == 0)) {
+        #echo '<pre>'; var_dump($dest); echo '</pre>'; exit;
+        if (in_array($input->get('task'), array('apply', 'save', 'save2new'))) {
             if (empty($data['alias'])) {
                 if (JFactory::getConfig()->get('unicodeslugs') == 1) {
                     $data['alias'] = JFilterOutput::stringURLUnicodeSlug($data['name']);
