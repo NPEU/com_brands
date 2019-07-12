@@ -74,6 +74,7 @@
             label="COM_BRANDS_LOGO_SVG_LABEL"
             description="COM_BRANDS_LOGO_SVG_DESC"
             filter="raw"
+            class="monospace"
         />
         <field name="state" type="list" label="JSTATUS"
             description="JFIELD_PUBLISHED_DESC" class="chzn-color-state"
@@ -88,5 +89,16 @@
             <option value="-2">
                 JTRASHED</option>
         </field>
+        <field
+            name="favion_zip"
+            type="file"
+            label="COM_BRANDS_FAVICON_LABEL"
+            description="COM_BRANDS_FAVICON_DESC"
+            accept="application/x-compressed,application/x-zip-compressed,application/zip,multipart/x-zip"
+        />
+        <field
+            name="favicon_zip_path"
+            type="hidden"
+        />
     </fieldset>
 </form>

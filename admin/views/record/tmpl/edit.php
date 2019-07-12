@@ -34,7 +34,11 @@ $global_edit_fields = array(
 $fieldsets = $this->form->getFieldsets();
 ?>
 <form action="<?php echo JRoute::_('index.php?option=com_brands&layout=edit&id=' . (int) $this->item->id); ?>"
-    method="post" name="adminForm" id="adminForm" class="form-validate">
+    method="post"
+    name="adminForm"
+    id="adminForm"
+    class="form-validate"
+    enctype="multipart/form-data">
     <div class="row-fluid">
         <div class="span12 form-horizontal">
             <ul class="nav nav-tabs">

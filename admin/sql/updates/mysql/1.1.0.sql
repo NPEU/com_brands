@@ -1,0 +1,1 @@
+ALTER TABLE #__brands ADD COLUMN favicon_zip_path text CHARACTER SET utf8 COLLATE utf8_unicode_ci NOT NULL AFTER logo_svg;
