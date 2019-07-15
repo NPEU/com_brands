@@ -101,6 +101,24 @@ class BrandsModelRecord extends JModelAdmin
     }
     
     /**
+	 * Method to get a single record.
+	 *
+	 * @param   integer  $pk  The id of the primary key.
+	 *
+	 * @return  \JObject|boolean  Object on success, false on failure.
+	 *
+	 * @since   1.6
+	 */
+	public function getItem($pk = null)
+	{
+        $item = parent:: getItem($pk);
+        $cat = JTable::getInstance('category');
+        $cat->load($item->catid);
+        $item->cat_alias = $cat->alias;
+        return $item;
+    }
+    
+    /**
      * Method to prepare the saved data.
      *
      * @param   array  $data  The form data.
@@ -122,13 +140,7 @@ class BrandsModelRecord extends JModelAdmin
         
         $data[$prefix]         = date($date_format, time()); // created/modified
         $data[$prefix . '_by'] = $user_id; // created_by/modified_by
-        
-        
-        
-        
-        
-        
-        
+          
         
         // Get parameters:
         $params = JComponentHelper::getParams(JRequest::getVar('option'));
@@ -168,7 +180,6 @@ class BrandsModelRecord extends JModelAdmin
 
         // Automatic handling of alias for empty fields
         // Taken from com_content/models/article.php
-        #echo '<pre>'; var_dump($dest); echo '</pre>'; exit;
         if (in_array($input->get('task'), array('apply', 'save', 'save2new'))) {
             if (empty($data['alias'])) {
                 if (JFactory::getConfig()->get('unicodeslugs') == 1) {

@@ -16,6 +16,10 @@
             type="hidden"
         />
         <field
+            name="cat_alias"
+            type="hidden"
+        />
+        <field
             name="name"
             type="text"
             size="30"

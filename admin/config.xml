@@ -5,6 +5,13 @@
         label="COM_BRANDS_CONFIG_SETTINGS_LABEL"
     >
         <field
+            name="logo_folder"
+            type="text"
+            label="COM_BRANDS_CONFIG_LOGO_FOLDER_LABEL"
+            description="COM_BRANDS_CONFIG_LOGO_FOLDER_DESC"
+            default=""
+        />
+        <field
             name="favicon_zip_upload_folder"
             type="text"
             label="COM_BRANDS_CONFIG_FAVICON_ZIP_FOLDER_LABEL"

@@ -9,6 +9,10 @@
 
 defined('_JEXEC') or die;
 
+require_once dirname(__DIR__) . '/vendor/autoload.php';
+
+use SVG\SVG;
+
 /**
  * Brands Record Controller
  */
@@ -53,15 +57,188 @@ class BrandsControllerRecord extends JControllerForm
         $recordId = $this->input->getInt($urlVar);
         // End SNIP
 
+
+        // Process SVG:
+        if(!empty($data['logo_svg'])) {
+            $svg = $data['logo_svg'];
+                        
+            // Validate SVG:
+            $svg_is_valid = true;
+
+            function tmpErrorHandler($errno, $errstr, $errfile, $errline) {
+                if (E_RECOVERABLE_ERROR === $errno) {
+                    throw new ErrorException($errstr, $errno, 0, $errfile, $errline);
+                }
+                return false;
+            }
+            set_error_handler('tmpErrorHandler');
+
+
+            try {
+                $image = @SVG::fromString($svg);
+            } catch(Exception $e) {
+                $svg_is_valid = false;
+            }
+
+            restore_error_handler();
+            ////
+
+            if (!$svg_is_valid) {
+                // Redirect and throw an error message:
+                JError::raiseWarning(100, sprintf(JText::_('COM_BRANDS_ERROR_SVG_INVALID')));
+                $app->setUserState($context . '.data', $data);
+                $this->setRedirect(
+                    JRoute::_(
+                        'index.php?option=' . $option . '&view=' . $view_item
+                        . $this->getRedirectToItemAppend($recordId, $key), false
+                    )
+                );
+                return false;
+
+            } else {
+                $svg_errors = array();
+                $svg_doc = $image->getDocument();
+                $svg_xml_string = (string) $image;
+                $svg_xml = new SimpleXMLElement($svg_xml_string);
+                $svg_xml->registerXPathNamespace('svg', 'http://www.w3.org/2000/svg');
+
+                $doc_attributes = $svg_doc->getSerializableAttributes();
+                $doc_title      = '';
+                $doc_id         = '';
+                $doc_title_id   = '';
+                
+                $doc_viewbox = $svg_doc->getViewBox();
+                $doc_vwidth  = $doc_viewbox[2];
+                $doc_vheight = $doc_viewbox[3];
+                $doc_ratio   = $doc_vwidth / $doc_vheight;
+
+                // Note php-svg adds xmlns="http://www.w3.org/2000/svg" and
+                // xmlns:xlink="http://www.w3.org/1999/xlink" if they're missing.
+
+                // Rejection-level checks:
+                // ----------------------
+
+
+                // Does the SVG have the correct height. We produce an error here; we can't just add it as it's
+                // likely the viewBox won't be set properly if we do:
+                if (!array_key_exists('height', $doc_attributes) || $doc_attributes['height'] != '80') {
+                    $svg_errors[] = 'COM_BRANDS_ERROR_SVG_MISSING_HEIGHT';
+                }
+
+
+                // Does the SVG have a viewBox. We produce an error here because we can't infer it:
+                if (!array_key_exists('viewBox', $doc_attributes)) {
+                    $svg_errors[] = 'COM_BRANDS_ERROR_SVG_MISSING_VIEWBOX';
+                }
+
+
+                // Does the SVG have a title:
+                //$title = $svg_xml->xpath("//svg:title");
+                $title = $svg_doc->getElementsByTagName('title')[0];
+
+                if (is_null($title)) {
+                    $svg_errors[] = 'COM_BRANDS_ERROR_SVG_MISSING_TITLE';
+                } elseif (($doc_title = $title->getValue()) == '') {
+                    $svg_errors[] = 'COM_BRANDS_ERROR_SVG_EMPTY_TITLE';
+                }
+
+                // Does the SVG contain an image? We'll be handling this in code, so reject ones that already
+                // have an image present.
+                $result = $svg_xml->xpath("//svg:image");
+
+                if (count($result) !== 0) {
+                    $svg_errors[] = 'COM_BRANDS_ERROR_SVG_HAS_IMAGE';
+                }
+
+                // Inferance-level checks:
+                // ----------------------
+
+                if (count($svg_errors) == 0 ) {
+                    // Passed all rejection checks, so continue to process the SVG:
+
+                    // Add a role of img to SVG if not present:
+                    if (!array_key_exists('role', $doc_attributes) || $doc_attributes['role'] != 'img') {
+                       $svg_doc->setAttribute('role', 'img');
+                    }
+
+                    // Add an id to TITLE if not present:
+                    if (($doc_id = $title->getAttribute('id')) == '') {
+                        $doc_id = $this->html_id($doc_title);
+                        $doc_title_id = $doc_id . '--title';
+                        $title->setAttribute('id', $doc_title_id);
+                    } else {
+                        $doc_title_id = $doc_id;
+                    }
+
+                    // Set aria-labelledby attribute of SVG to TITLE id:
+                    // (we might as well do this even if it already exists and is the same)
+                    $svg_doc->setAttribute('aria-labelledby',  $doc_title_id );
+
+                    // Generate a fallback PNG and add the IMAGE to the SVG:
+                    // php-svg does a terrible job of rasterising at the moment, unfortuately, but this is how
+                    // to do it: (not 4x image size helps improve aliasing)
+                    #$raster = $image->toRasterImage($doc_viewbox[2] * 4, $doc_viewbox[3] * 4);
+                    #imagepng($raster, $doc_id . '.png', 0);
+                    
+                    $svg_doc->setAttribute('height', $doc_vheight * 4);
+                    $svg_doc->setAttribute('width', ($doc_vheight * 4) * $doc_ratio);
+                    
+                    $logos_root_folder = trim($params->get('logos_root_folder'), '/');
+                    #$logos_root_folder = 'img';
+                    $logos_folder      = $_SERVER['DOCUMENT_ROOT'] . '/' . $logos_root_folder  . '/' . $data['cat_alias'] . '-logos';
+                    
+                    if (!file_exists($logos_folder)) {
+                        mkdir($logos_folder);
+                    }
+                    
+                    // Temporarily write the svg to a file:
+                    $svg_filename = $logos_folder . '/' . trim($doc_id, '-logo') . '-logo.svg';
+                    $png_filename = str_replace('.svg', '.png', $svg_filename);
+                    file_put_contents($svg_filename, $image->toXMLString());
+                    
+                    
+                    $im = new Imagick();
+                    $im->readImageBlob(file_get_contents($svg_filename));
+                    $im->setImageFormat("png24");
+                    $im->writeImage($png_filename);
+                    $im->clear();
+                    $im->destroy();
+                    
+                    $svg_doc->addChild(new \SVG\Nodes\Embedded\SVGImage(''));
+                    
+                    $img = $svg_doc->getElementsByTagName('image')[0];
+                    $img->setAttribute('src', $png_filename);
+                    $img->setAttribute('alt', 'Logo: ' . $doc_title);
+                    
+                    file_put_contents($svg_filename, $image->toXMLString(false));
+                    $data['logo_svg'] = $image->toXMLString(false);
+                } else {
+                    // Redirect and throw an error message:
+                    foreach ($svg_errors as $svg_error) {
+                        JError::raiseWarning(100, JText::_($svg_error));
+                    }
+                    $app->setUserState($context . '.data', $data);
+                    $this->setRedirect(
+                        JRoute::_(
+                            'index.php?option=' . $option . '&view=' . $view_item
+                            . $this->getRedirectToItemAppend($recordId, $key), false
+                        )
+                    );
+                    return false;
+                }
+
+            }
+        }
+
+        // Process Favicon:
         $favicon_filename =  $files['favion_zip']['name'];
 
         if(!empty($favicon_filename)) {
             $max = $this->return_bytes(ini_get('upload_max_filesize'));
 
             if ($files['favion_zip']['size'] > $max) {
-                JError::raiseWarning(100, sprintf(JText::_('COM_BRANDS_ERROR_TOO_LARGE'), $favicon_filename, ini_get('upload_max_filesize')));
-
-                // Redirect back to the edit screen.
+                // Redirect and throw an error message:
+                JError::raiseWarning(100, sprintf(JText::_('COM_BRANDS_ERROR_ZIP_TOO_LARGE'), $favicon_filename, ini_get('upload_max_filesize')));
                 $app->setUserState($context . '.data', $data);
                 $this->setRedirect(
                     JRoute::_(
@@ -99,12 +276,20 @@ class BrandsControllerRecord extends JControllerForm
                         for($i = 0; $i < $zip->numFiles; $i++) {
                             $filename = $zip->getNameIndex($i);
                             $fileinfo = pathinfo($filename);
-                            echo '<pre>'; var_dump($brand_favicon_folder . $fileinfo['basename']); echo '</pre>';
                             copy('zip://' . $dest . '#' . $filename, $dest_folder . $fileinfo['basename']);
                         }
                         $zip->close();
                     } else {
+                        // Redirect and throw an error message:
                         JError::raiseWarning(100, sprintf(JText::_('COM_BRANDS_ERROR_FAILED_UNZIP'), $favicon_filename, $brand_favicon_folder));
+                        $app->setUserState($context . '.data', $data);
+                        $this->setRedirect(
+                            JRoute::_(
+                                'index.php?option=' . $option . '&view=' . $view_item
+                                . $this->getRedirectToItemAppend($recordId, $key), false
+                            )
+                        );
+                        return false;
                     }
 
                     // Add binary to data:
@@ -114,10 +299,8 @@ class BrandsControllerRecord extends JControllerForm
                     // Add success message:
                     $app->enqueueMessage(sprintf(JText::_('COM_BRANDS_MESSAGE_SUCCESS'), $favicon_filename, $brand_favicon_folder));
                 } else {
-                    // Redirect and throw an error message
+                    // Redirect and throw an error message:
                     JError::raiseWarning(100, sprintf(JText::_('COM_BRANDS_ERROR_FAILED_UPLOAD'), $favicon_filename));
-
-                    // Redirect back to the edit screen.
                     $app->setUserState($context . '.data', $data);
                     $this->setRedirect(
                         JRoute::_(
@@ -125,11 +308,10 @@ class BrandsControllerRecord extends JControllerForm
                             . $this->getRedirectToItemAppend($recordId, $key), false
                         )
                     );
-
                     return false;
                 }
             } else {
-                //Redirect and notify user file is not right extension
+                //Redirect and notify user file is not right extension:
                 JError::raiseWarning(100, sprintf(JText::_('COM_BRANDS_ERROR_WRONG_TYPE'), $favicon_filename));
                 $app->setUserState($context . '.data', $data);
                 $this->setRedirect(
@@ -149,13 +331,12 @@ class BrandsControllerRecord extends JControllerForm
         return parent::save($key, $urlVar);
     }
 
-
     /**
      * Converts filesize string to real bytes.
      *
      * @param   string   $val  Filesize string.
      */
-    public function return_bytes($val)
+    protected function return_bytes($val)
     {
         if (empty($val)) {
             return 0;
@@ -188,4 +369,73 @@ class BrandsControllerRecord extends JControllerForm
 
         return (int) $val;
     }
+    
+    /**
+     * Strips punctuation from a string.
+     *
+     * @param   string   $text.
+     */
+    protected function strip_punctuation($text) {
+        if (!is_string($text)) {
+            trigger_error('Function \'strip_punctuation\' expects argument 1 to be an string', E_USER_ERROR);
+            return false;
+        }
+        $text = html_entity_decode($text, ENT_QUOTES);
+
+        $urlbrackets = '\[\]\(\)';
+        $urlspacebefore = ':;\'_\*%@&?!' . $urlbrackets;
+        $urlspaceafter = '\.,:;\'\-_\*@&\/\\\\\?!#' . $urlbrackets;
+        $urlall = '\.,:;\'\-_\*%@&\/\\\\\?!#' . $urlbrackets;
+
+        $specialquotes = '\'"\*<>';
+
+        $fullstop = '\x{002E}\x{FE52}\x{FF0E}';
+        $comma = '\x{002C}\x{FE50}\x{FF0C}';
+        $arabsep = '\x{066B}\x{066C}';
+        $numseparators = $fullstop . $comma . $arabsep;
+
+        $numbersign = '\x{0023}\x{FE5F}\x{FF03}';
+        $percent = '\x{066A}\x{0025}\x{066A}\x{FE6A}\x{FF05}\x{2030}\x{2031}';
+        $prime = '\x{2032}\x{2033}\x{2034}\x{2057}';
+        $nummodifiers = $numbersign . $percent . $prime;
+        $return = preg_replace(
+        array(
+            // Remove separator, control, formatting, surrogate,
+            // open/close quotes.
+            '/[\p{Z}\p{Cc}\p{Cf}\p{Cs}\p{Pi}\p{Pf}]/u',
+            // Remove other punctuation except special cases
+            '/\p{Po}(?<![' . $specialquotes .
+            $numseparators . $urlall . $nummodifiers . '])/u',
+            // Remove non-URL open/close brackets, except URL brackets.
+            '/[\p{Ps}\p{Pe}](?<![' . $urlbrackets . '])/u',
+            // Remove special quotes, dashes, connectors, number
+            // separators, and URL characters followed by a space
+            '/[' . $specialquotes . $numseparators . $urlspaceafter .
+            '\p{Pd}\p{Pc}]+((?= )|$)/u',
+            // Remove special quotes, connectors, and URL characters
+            // preceded by a space
+            '/((?<= )|^)[' . $specialquotes . $urlspacebefore . '\p{Pc}]+/u',
+            // Remove dashes preceded by a space, but not followed by a number
+            '/((?<= )|^)\p{Pd}+(?![\p{N}\p{Sc}])/u',
+            // Remove consecutive spaces
+            '/ +/',
+            ), ' ', $text);
+        $return = str_replace('/', '_', $return);
+        return str_replace("'", '', $return);
+    }
+
+    /**
+     * Creates a suitable id/alias from a string.
+     *
+     * @param   string   $text.
+     */
+    protected function html_id($text) {
+        if (!is_string($text)) {
+            trigger_error('Function \'html_id\' expects argument 1 to be an string', E_USER_ERROR);
+            return false;
+        }
+        $return = strtolower(trim(preg_replace('/\s+/', '-', $this->strip_punctuation($text))));
+        return $return;
+    }
+
 }

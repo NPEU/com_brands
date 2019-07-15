@@ -68,7 +68,8 @@
             <folder>models</folder>
             <folder>sql</folder>
             <folder>tables</folder>
-            <folder>views</folder>
+            <folder>vendor</folder>
+            <folder>views</folder>         
         </files>
     </administration>
 
