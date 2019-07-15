@@ -20,6 +20,14 @@
             type="hidden"
         />
         <field
+            name="logo_svg_path"
+            type="hidden"
+        />
+        <field
+            name="logo_png_path"
+            type="hidden"
+        />
+        <field
             name="name"
             type="text"
             size="30"

@@ -12,6 +12,20 @@
             default=""
         />
         <field
+            name="logo_file_suffix"
+            type="text"
+            label="COM_BRANDS_CONFIG_LOGO_FILE_SUFFIX_LABEL"
+            description="COM_BRANDS_CONFIG_LOGO_FILE_SUFFIX_DESC"
+            default=""
+        />
+        <field
+            name="logo_image_height"
+            type="int"
+            label="COM_BRANDS_CONFIG_LOGO_IMAGE_HEIGHT_LABEL"
+            description="COM_BRANDS_CONFIG_LOGO_IMAGE_HEIGHT_DESC"
+            default=""
+        />
+        <field
             name="favicon_zip_upload_folder"
             type="text"
             label="COM_BRANDS_CONFIG_FAVICON_ZIP_FOLDER_LABEL"

@@ -41,6 +41,8 @@ class BrandsControllerRecord extends JControllerForm
         $data      = $app->input->post->get($control, array(), 'array');
         $view_item = $this->view_item;
 
+        #echo '<pre>'; var_dump($data); echo '</pre>'; exit;
+
         // SNIP: Taken from libraries/src/MVC/Controller/FormController.php save method, because we
         // can't call that first.
 
@@ -110,20 +112,13 @@ class BrandsControllerRecord extends JControllerForm
                 $doc_viewbox = $svg_doc->getViewBox();
                 $doc_vwidth  = $doc_viewbox[2];
                 $doc_vheight = $doc_viewbox[3];
-                $doc_ratio   = $doc_vwidth / $doc_vheight;
+                #$doc_ratio   = $doc_vwidth / $doc_vheight;
 
                 // Note php-svg adds xmlns="http://www.w3.org/2000/svg" and
                 // xmlns:xlink="http://www.w3.org/1999/xlink" if they're missing.
 
                 // Rejection-level checks:
                 // ----------------------
-
-
-                // Does the SVG have the correct height. We produce an error here; we can't just add it as it's
-                // likely the viewBox won't be set properly if we do:
-                if (!array_key_exists('height', $doc_attributes) || $doc_attributes['height'] != '80') {
-                    $svg_errors[] = 'COM_BRANDS_ERROR_SVG_MISSING_HEIGHT';
-                }
 
 
                 // Does the SVG have a viewBox. We produce an error here because we can't infer it:
@@ -135,7 +130,9 @@ class BrandsControllerRecord extends JControllerForm
                 // Does the SVG have a title:
                 //$title = $svg_xml->xpath("//svg:title");
                 $title = $svg_doc->getElementsByTagName('title')[0];
-
+                #echo '<pre>'; var_dump($titles); echo '</pre>'; exit;
+                #echo '<pre>'; var_dump((string) $title[0]['id']); echo '</pre>'; exit;
+                #echo '<pre>'; var_dump((string) $title[0]); echo '</pre>'; exit;
                 if (is_null($title)) {
                     $svg_errors[] = 'COM_BRANDS_ERROR_SVG_MISSING_TITLE';
                 } elseif (($doc_title = $title->getValue()) == '') {
@@ -181,37 +178,56 @@ class BrandsControllerRecord extends JControllerForm
                     #imagepng($raster, $doc_id . '.png', 0);
                     
                     $svg_doc->setAttribute('height', $doc_vheight * 4);
-                    $svg_doc->setAttribute('width', ($doc_vheight * 4) * $doc_ratio);
+                    $svg_doc->setAttribute('width', ($doc_vwidth * 4));
                     
-                    $logos_root_folder = trim($params->get('logos_root_folder'), '/');
-                    #$logos_root_folder = 'img';
-                    $logos_folder      = $_SERVER['DOCUMENT_ROOT'] . '/' . $logos_root_folder  . '/' . $data['cat_alias'] . '-logos';
+                    $logos_root_folder = trim($params->get('logo_folder'), '/');
+                    #$logos_root_folder   = 'img';
+                    $logos_public_folder = '/' . $logos_root_folder  . '/' . $data['cat_alias'] . '/';
+                    $logos_server_folder = $_SERVER['DOCUMENT_ROOT'] .  $logos_public_folder;
                     
-                    if (!file_exists($logos_folder)) {
-                        mkdir($logos_folder);
+                    $svg_filename = trim($doc_id, $params->get('logo_file_suffix')) . $params->get('logo_file_suffix') . '.svg';
+                    $png_filename = str_replace('.svg', '.png', $svg_filename);
+                    
+                    $svg_path = $logos_server_folder . $svg_filename;
+                    $png_path = $logos_server_folder . $png_filename;
+                    
+                    if (!file_exists($logos_server_folder)) {
+                        mkdir($logos_server_folder, 0775, true);
                     }
                     
                     // Temporarily write the svg to a file:
-                    $svg_filename = $logos_folder . '/' . trim($doc_id, '-logo') . '-logo.svg';
-                    $png_filename = str_replace('.svg', '.png', $svg_filename);
-                    file_put_contents($svg_filename, $image->toXMLString());
+                    
+                    file_put_contents($svg_path, $image->toXMLString());
                     
                     
                     $im = new Imagick();
-                    $im->readImageBlob(file_get_contents($svg_filename));
+                    $im->readImageBlob(file_get_contents($svg_path));
                     $im->setImageFormat("png24");
-                    $im->writeImage($png_filename);
+                    $im->writeImage($png_path);
                     $im->clear();
                     $im->destroy();
                     
+                    // Finish off the SVG - note the template should use file_get_contents from the 
+                    // generated SVG, the data['logo_svg'] that's stored in the database should be
+                    // pre-finalisation to avoid errors during subsequent saves.
+                    
+                    $data['logo_svg']      = $image->toXMLString(false);
+                    $data['logo_svg_path'] = $logos_public_folder . $svg_filename;
+                    $data['logo_png_path'] = $logos_public_folder . $png_filename;
+                    
+                    // Add the falback image tag for the generated SVG:
                     $svg_doc->addChild(new \SVG\Nodes\Embedded\SVGImage(''));
-                    
                     $img = $svg_doc->getElementsByTagName('image')[0];
-                    $img->setAttribute('src', $png_filename);
+                    $img->setAttribute('src', $logos_public_folder . $png_filename);
                     $img->setAttribute('alt', 'Logo: ' . $doc_title);
+                    $img->setAttribute('height', $params->get('logos_image_height'));
                     
-                    file_put_contents($svg_filename, $image->toXMLString(false));
-                    $data['logo_svg'] = $image->toXMLString(false);
+                    // Reset attributes:
+                    $svg_doc->removeAttribute('width');
+                    $svg_doc->setAttribute('height', $params->get('logos_image_height'));
+                    
+                    // Override generated SVG with final output:
+                    file_put_contents($svg_path, $image->toXMLString(false));                    
                 } else {
                     // Redirect and throw an error message:
                     foreach ($svg_errors as $svg_error) {
@@ -253,8 +269,8 @@ class BrandsControllerRecord extends JControllerForm
 
             if (in_array($files['favion_zip']['type'], $accept_types)) {
 
-                #$favicon_zip_upload_root_folder = trim($params->get('favicon_zip_upload_folder'), '/');
-                $favicon_zip_upload_root_folder = 'templates/npeu6/favicon';
+                $favicon_zip_upload_root_folder = trim($params->get('favicon_zip_upload_folder'), '/');
+                #$favicon_zip_upload_root_folder = 'templates/npeu6/favicon';
                 $brand_pathname = str_replace(' ', '-', strtolower(JFile::makeSafe($data['name'])));
                 $brand_favicon_folder = $favicon_zip_upload_root_folder . '/' . $brand_pathname . '/';
                 $dest_folder = $_SERVER['DOCUMENT_ROOT'] . '/' . $brand_favicon_folder;
@@ -276,6 +292,7 @@ class BrandsControllerRecord extends JControllerForm
                         for($i = 0; $i < $zip->numFiles; $i++) {
                             $filename = $zip->getNameIndex($i);
                             $fileinfo = pathinfo($filename);
+                            #echo '<pre>'; var_dump($brand_favicon_folder . $fileinfo['basename']); echo '</pre>';
                             copy('zip://' . $dest . '#' . $filename, $dest_folder . $fileinfo['basename']);
                         }
                         $zip->close();
