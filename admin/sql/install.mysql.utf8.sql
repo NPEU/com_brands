@@ -9,6 +9,7 @@ CREATE TABLE `#__brands` (
   `secondary_colour` varchar(7) NOT NULL DEFAULT '#000000',
   `tertiary_colour` varchar(7) NOT NULL DEFAULT '#000000',
   `logo_svg` mediumtext CHARACTER SET utf8 COLLATE utf8_unicode_ci NOT NULL,
+  `logo_svg_with_fallback` mediumtext CHARACTER SET utf8 COLLATE utf8_unicode_ci NOT NULL,
   `logo_svg_path` text CHARACTER SET utf8 COLLATE utf8_unicode_ci NOT NULL,
   `logo_png_path` text CHARACTER SET utf8 COLLATE utf8_unicode_ci NOT NULL,
   `favicon_zip_path` text CHARACTER SET utf8 COLLATE utf8_unicode_ci NOT NULL,

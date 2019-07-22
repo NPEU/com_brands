@@ -19,14 +19,14 @@ $listDirn  = $this->escape($this->filter_order_Dir);
 ?>
 <form action="index.php?option=com_brands&view=records" method="post" id="adminForm" name="adminForm">
 
-    <?php if (!empty( $this->sidebar)) : ?>
-    <div id="j-sidebar-container" class="span2">
-        <?php echo $this->sidebar; ?>
-    </div>
-    <div id="j-main-container" class="span10">
-    <?php else : ?>
-    <div id="j-main-container">
-    <?php endif;?>
+        <?php if (!empty( $this->sidebar)) : ?>
+        <div id="j-sidebar-container" class="span2">
+            <?php echo $this->sidebar; ?>
+        </div>
+        <div id="j-main-container" class="span10">
+        <?php else : ?>
+        <div id="j-main-container">
+        <?php endif;?>
 
         <div class="row-fluid">
             <div class="span12">
@@ -47,8 +47,11 @@ $listDirn  = $this->escape($this->filter_order_Dir);
                     <th width="4%">
                         <?php echo JHtml::_('grid.checkall'); ?>
                     </th>
-                    <th width="40%">
+                    <th width="20%">
                         <?php echo JHtml::_('grid.sort', 'COM_BRANDS_RECORDS_NAME', 'name', $listDirn, $listOrder); ?>
+                    </th>
+                    <th width="20%">
+                        <?php echo JText::_('COM_BRANDS_RECORDS_LOGO'); ?>
                     </th>
                     <th width="10%">
                         <?php echo JHtml::_('grid.sort', 'COM_BRANDS_PUBLISHED', 'state', $listDirn, $listOrder); ?>
@@ -89,6 +92,12 @@ $listDirn  = $this->escape($this->filter_order_Dir);
                                 <?php echo JText::_('COM_BRANDS_RECORDS_CATEGORY'); ?>: <a class="hasTooltip" href="<?php echo $cat_link; ?>" title="<?php echo JText::_('COM_BRANDS_EDIT_CATEGORY'); ?>"><?php echo $item->category; ?></a>
                             </div>
                         </div>
+                    </td>
+                    <td align="center">
+                        <?php #echo $item->logo_svg; ?>
+                        <?php if (!empty($item->logo_svg_path)) : ?>
+                        <img src="<?php echo $item->logo_svg_path; ?>" alt="Logo: <?php echo $item->name; ?>" height="30" style="height: 30px" onerror="this.src='<?php echo $item->logo_png_path; ?>'; this.onerror=null;">
+                        <?php endif; ?>
                     </td>
                     <td align="center">
                         <?php echo JHtml::_('jgrid.published', $item->state, $i, 'records.', true, 'cb'); ?>

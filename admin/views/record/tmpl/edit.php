@@ -6,7 +6,7 @@
  * @copyright   Copyright (C) NPEU 2019.
  * @license     MIT License; see LICENSE.md
  */
-
+ini_set('display_errors', 'on');
 defined('_JEXEC') or die;
 
 JHtml::_('behavior.tooltip');
@@ -63,10 +63,13 @@ $fieldsets = $this->form->getFieldsets();
                                 <?php if ($field->type != 'Button'): ?>
                                 <div class="control-label">
                                     <?php echo JText::_($field->label); ?>
+                                    <?php if ($field->fieldname == 'logo_svg' && !empty($this->item->logo_svg_path)) : ?><br>
+                                    <img src="<?php echo $this->item->logo_svg_path; ?>" alt="Logo: <?php echo $this->item->name; ?>" height="30" style="height: 30px; margin-bottom: 1em;" onerror="this.src='<?php echo $this->item->logo_png_path; ?>'; this.onerror=null;">
+                                    <?php endif; ?>
                                 </div>
                                 <?php endif; ?>
                                 <div class="controls">
-                                    <?php echo $field->input; ?>
+                                    <?php echo $field->input; ?>  
                                 </div>
                             </div><!-- End control-group -->
                             <?php endif; endforeach; ?>
