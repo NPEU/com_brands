@@ -104,6 +104,8 @@ class BrandsControllerRecord extends JControllerForm
                 $svg_xml = new SimpleXMLElement($svg_xml_string);
                 $svg_xml->registerXPathNamespace('svg', 'http://www.w3.org/2000/svg');
 
+                $svg_id = $this->html_id($data['name']);
+
                 $doc_attributes = $svg_doc->getSerializableAttributes();
                 $doc_title      = '';
                 $doc_id         = '';
@@ -130,9 +132,6 @@ class BrandsControllerRecord extends JControllerForm
                 // Does the SVG have a title:
                 //$title = $svg_xml->xpath("//svg:title");
                 $title = $svg_doc->getElementsByTagName('title')[0];
-                #echo '<pre>'; var_dump($titles); echo '</pre>'; exit;
-                #echo '<pre>'; var_dump((string) $title[0]['id']); echo '</pre>'; exit;
-                #echo '<pre>'; var_dump((string) $title[0]); echo '</pre>'; exit;
                 if (is_null($title)) {
                     $svg_errors[] = 'COM_BRANDS_ERROR_SVG_MISSING_TITLE';
                 } elseif (($doc_title = $title->getValue()) == '') {
@@ -160,7 +159,7 @@ class BrandsControllerRecord extends JControllerForm
 
                     // Add an id to TITLE if not present:
                     if (($doc_id = $title->getAttribute('id')) == '') {
-                        $doc_id = $this->html_id($data['name']);
+                        $doc_id = $svg_id;
                         $doc_title_id = $doc_id . '--title';
                         $title->setAttribute('id', $doc_title_id);
                     } else {
@@ -185,7 +184,7 @@ class BrandsControllerRecord extends JControllerForm
                     $logos_public_folder = '/' . $logos_root_folder  . '/' . $data['cat_alias'] . '/';
                     $logos_server_folder = $_SERVER['DOCUMENT_ROOT'] .  $logos_public_folder;
                     
-                    $svg_filename = trim($doc_id, $params->get('logo_file_suffix')) . $params->get('logo_file_suffix') . '.svg';
+                    $svg_filename = preg_replace('#' . $params->get('logo_file_suffix') . '$#', '', $svg_id) . $params->get('logo_file_suffix') . '.svg';
                     $png_filename = str_replace('.svg', '.png', $svg_filename);
                     
                     $svg_path = $logos_server_folder . $svg_filename;
@@ -273,8 +272,7 @@ class BrandsControllerRecord extends JControllerForm
 
                 $favicon_zip_upload_root_folder = trim($params->get('favicon_zip_upload_folder'), '/');
                 #$favicon_zip_upload_root_folder = 'templates/npeu6/favicon';
-                $brand_pathname = str_replace(' ', '-', strtolower(JFile::makeSafe($data['name'])));
-                $brand_favicon_folder = $favicon_zip_upload_root_folder . '/' . $brand_pathname . '/';
+                $brand_favicon_folder = $favicon_zip_upload_root_folder . '/' . $svg_id . '/';
                 $dest_folder = $_SERVER['DOCUMENT_ROOT'] . '/' . $brand_favicon_folder;
 
                 if (!file_exists($dest_folder)) {
@@ -453,7 +451,9 @@ class BrandsControllerRecord extends JControllerForm
             trigger_error('Function \'html_id\' expects argument 1 to be an string', E_USER_ERROR);
             return false;
         }
-        $return = strtolower(trim(preg_replace('/\s+/', '-', $this->strip_punctuation($text))));
+        
+        $return = trim(str_replace(' ', '-', strtolower(JFile::makeSafe($text))));
+        #$return = strtolower(trim(preg_replace('/\s+/', '-', $this->strip_punctuation($text))));
         return $return;
     }
 
