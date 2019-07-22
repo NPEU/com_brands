@@ -66,6 +66,9 @@ $fieldsets = $this->form->getFieldsets();
                                     <?php if ($field->fieldname == 'logo_svg' && !empty($this->item->logo_svg_path)) : ?><br>
                                     <img src="<?php echo $this->item->logo_svg_path; ?>" alt="Logo: <?php echo $this->item->name; ?>" height="30" style="height: 30px; margin-bottom: 1em;" onerror="this.src='<?php echo $this->item->logo_png_path; ?>'; this.onerror=null;">
                                     <?php endif; ?>
+                                    <?php if ($field->fieldname == 'favicon_zip' && !empty($this->item->favicon_zip_path)) : ?><br>
+                                    <a href="<?php echo $this->item->favicon_zip_path; ?>">Download Favicon Zip</a>
+                                    <?php endif; ?>
                                 </div>
                                 <?php endif; ?>
                                 <div class="controls">

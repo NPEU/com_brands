@@ -249,12 +249,12 @@ class BrandsControllerRecord extends JControllerForm
         }
 
         // Process Favicon:
-        $favicon_filename =  $files['favion_zip']['name'];
+        $favicon_filename =  $files['favicon_zip']['name'];
 
         if(!empty($favicon_filename)) {
             $max = $this->return_bytes(ini_get('upload_max_filesize'));
 
-            if ($files['favion_zip']['size'] > $max) {
+            if ($files['favicon_zip']['size'] > $max) {
                 // Redirect and throw an error message:
                 JError::raiseWarning(100, sprintf(JText::_('COM_BRANDS_ERROR_ZIP_TOO_LARGE'), $favicon_filename, ini_get('upload_max_filesize')));
                 $app->setUserState($context . '.data', $data);
@@ -267,9 +267,9 @@ class BrandsControllerRecord extends JControllerForm
                 return false;
             }
 
-            $accept_types = explode(',', str_replace(', ', ',', $form->getFieldAttribute('favion_zip', 'accept')));
+            $accept_types = explode(',', str_replace(', ', ',', $form->getFieldAttribute('favicon_zip', 'accept')));
 
-            if (in_array($files['favion_zip']['type'], $accept_types)) {
+            if (in_array($files['favicon_zip']['type'], $accept_types)) {
 
                 $favicon_zip_upload_root_folder = trim($params->get('favicon_zip_upload_folder'), '/');
                 #$favicon_zip_upload_root_folder = 'templates/npeu6/favicon';
@@ -281,11 +281,10 @@ class BrandsControllerRecord extends JControllerForm
                     mkdir($dest_folder);
                 }
 
-                $src  = $files['favion_zip']['tmp_name'];
+                $src  = $files['favicon_zip']['tmp_name'];
                 $dest = $dest_folder . $favicon_filename;
 
-                $data['favicon_zip_path'] = '/' . $brand_favicon_folder . $favicon_filename;
-
+                
                 if (JFile::upload($src, $dest)) {
 
                     // Unzip to folder:
@@ -298,6 +297,7 @@ class BrandsControllerRecord extends JControllerForm
                             copy('zip://' . $dest . '#' . $filename, $dest_folder . $fileinfo['basename']);
                         }
                         $zip->close();
+                        $data['favicon_zip_path'] = '/' . $brand_favicon_folder . $favicon_filename;
                     } else {
                         // Redirect and throw an error message:
                         JError::raiseWarning(100, sprintf(JText::_('COM_BRANDS_ERROR_FAILED_UNZIP'), $favicon_filename, $brand_favicon_folder));

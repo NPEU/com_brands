@@ -112,7 +112,7 @@
                 JTRASHED</option>
         </field>
         <field
-            name="favion_zip"
+            name="favicon_zip"
             type="file"
             label="COM_BRANDS_FAVICON_LABEL"
             description="COM_BRANDS_FAVICON_DESC"
