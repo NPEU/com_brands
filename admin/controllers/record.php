@@ -104,7 +104,9 @@ class BrandsControllerRecord extends JControllerForm
                 $svg_xml = new SimpleXMLElement($svg_xml_string);
                 $svg_xml->registerXPathNamespace('svg', 'http://www.w3.org/2000/svg');
 
-                $svg_id = $this->html_id($data['name']);
+                $svg_id = empty($data['alias'])
+                        ? $this->html_id($data['name'])
+                        : $data['alias'];
 
                 $doc_attributes = $svg_doc->getSerializableAttributes();
                 $doc_title      = '';
