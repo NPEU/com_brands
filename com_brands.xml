@@ -13,7 +13,7 @@
     <version>1.0.2</version>
     <!-- The description is optional and defaults to the name -->
     <description>COM_BRANDS_DESCRIPTION</description>
-    
+
     <updateservers>
         <!-- Note: No spaces or linebreaks allowed between the server tags -->
         <server type="extension" name="NPEU: com_brands Update Site">https://raw.githubusercontent.com/NPEU/com_brands/master/update-manifest.xml</server>
@@ -39,17 +39,17 @@
         <!-- Administration Menu Section -->
         <menu>COM_BRANDS_MENU</menu>
         <submenu>
-			<!--
-				Note that all & must be escaped to &amp; for the file to be valid
-				XML and be parsed by the installer
-			-->
-			<menu link="option=com_brands" view="records">
+            <!--
+                Note that all & must be escaped to &amp; for the file to be valid
+                XML and be parsed by the installer
+            -->
+            <menu link="option=com_brands" view="records">
                 COM_BRANDS_MANAGER_SUBMENU_BRANDS
             </menu>
-			<menu link="option=com_categories&amp;extension=com_brands" view="categories">
+            <menu link="option=com_categories&amp;extension=com_brands" view="categories">
                 COM_BRANDS_MANAGER_SUBMENU_CATEGORIES
             </menu>
-		</submenu>
+        </submenu>
 
         <!-- Administration Main File Copy Section -->
         <!-- Note the folder attribute: This attribute describes the folder
@@ -57,11 +57,11 @@
                 in this section are copied from /admin/ in the package -->
         <files folder="admin">
             <!-- Admin Main File Copy Section -->
-            <filename>access.xml</filename>
-            <filename>config.xml</filename>
-            <filename>controller.php</filename>
-            <filename>brands.php</filename>
-            <filename>index.html</filename>
+            <file>access.xml</file>
+            <file>config.xml</file>
+            <file>controller.php</file>
+            <file>brands.php</file>
+            <file>index.html</file>
             <folder>controllers</folder>
             <folder>helpers</folder>
             <folder>language</folder>
@@ -69,7 +69,7 @@
             <folder>sql</folder>
             <folder>tables</folder>
             <folder>vendor</folder>
-            <folder>views</folder>         
+            <folder>views</folder>
         </files>
     </administration>
 

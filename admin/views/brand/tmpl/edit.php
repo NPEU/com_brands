@@ -6,7 +6,7 @@
  * @copyright   Copyright (C) NPEU 2019.
  * @license     MIT License; see LICENSE.md
  */
-ini_set('display_errors', 'on');
+
 defined('_JEXEC') or die;
 
 JHtml::_('behavior.tooltip');
@@ -57,8 +57,8 @@ $fieldsets = $this->form->getFieldsets();
                         <?php endif; ?>
                         <?php $hidden_fields = array(); foreach($form_fieldset as $field): if(!in_array($field->fieldname, $global_edit_fields)): ?>
                         <?php if($field->type == 'Hidden'){$hidden_fields[] = $field->input; continue;} ?>
-                    
-                        
+
+
                             <div class="control-group">
                                 <?php if ($field->type != 'Button'): ?>
                                 <div class="control-label">
@@ -72,17 +72,17 @@ $fieldsets = $this->form->getFieldsets();
                                 </div>
                                 <?php endif; ?>
                                 <div class="controls">
-                                    <?php echo $field->input; ?>  
+                                    <?php echo $field->input; ?>
                                 </div>
                             </div><!-- End control-group -->
                             <?php endif; endforeach; ?>
-                            
+
                         <?php if ($fieldset->name == 'main'): ?>
                         </div>
                         <div class="span3">
                         <?php echo JLayoutHelper::render('joomla.edit.global', $this); ?>
                         <?php endif; ?>
-                        
+
                         </div>
                         <?php echo implode("\n", $hidden_fields); ?>
                     </div>
@@ -90,6 +90,6 @@ $fieldsets = $this->form->getFieldsets();
             <?php endforeach; ?>
         </div>
     </div>
-    <input type="hidden" name="task" value="record.edit" />
+    <input type="hidden" name="task" value="brand.edit" />
     <?php echo JHtml::_('form.token'); ?>
 </form>

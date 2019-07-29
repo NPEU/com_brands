@@ -14,10 +14,25 @@ require_once dirname(__DIR__) . '/vendor/autoload.php';
 use SVG\SVG;
 
 /**
- * Brands Record Controller
+ * Brands Brand Controller
  */
-class BrandsControllerRecord extends JControllerForm
+class BrandsControllerBrand extends JControllerForm
 {
+
+    /**
+     * Constructor.
+     *
+     * @param   array  $config  An optional associative array of configuration settings.
+     *
+     * @see     \JControllerLegacy
+     * @throws  \Exception
+     */
+    public function __construct($config = array())
+    {
+        parent::__construct($config);
+        $this->view_list = 'brands';
+    }
+
     /**
      * Method to save a record.
      *
@@ -47,14 +62,14 @@ class BrandsControllerRecord extends JControllerForm
         // can't call that first.
 
         // Determine the name of the primary key for the data.
-		if (empty($key)) {
-			$key = $table->getKeyName();
-		}
+        if (empty($key)) {
+            $key = $table->getKeyName();
+        }
 
         // To avoid data collisions the urlVar may be different from the primary key.
-		if (empty($urlVar)) {
-			$urlVar = $key;
-		}
+        if (empty($urlVar)) {
+            $urlVar = $key;
+        }
 
         $recordId = $this->input->getInt($urlVar);
         // End SNIP
@@ -63,7 +78,7 @@ class BrandsControllerRecord extends JControllerForm
         // Process SVG:
         if(!empty($data['logo_svg'])) {
             $svg = $data['logo_svg'];
-                        
+
             // Validate SVG:
             $svg_is_valid = true;
 
@@ -112,7 +127,7 @@ class BrandsControllerRecord extends JControllerForm
                 $doc_title      = '';
                 $doc_id         = '';
                 $doc_title_id   = '';
-                
+
                 $doc_viewbox = $svg_doc->getViewBox();
                 $doc_vwidth  = $doc_viewbox[2];
                 $doc_vheight = $doc_viewbox[3];
@@ -177,51 +192,51 @@ class BrandsControllerRecord extends JControllerForm
                     // to do it: (not 4x image size helps improve aliasing)
                     #$raster = $image->toRasterImage($doc_viewbox[2] * 4, $doc_viewbox[3] * 4);
                     #imagepng($raster, $doc_id . '.png', 0);
-                    
+
                     $svg_doc->setAttribute('height', $doc_vheight * 4);
                     $svg_doc->setAttribute('width', ($doc_vwidth * 4));
-                    
+
                     $logos_root_folder = trim($params->get('logo_folder'), '/');
                     #$logos_root_folder   = 'img';
                     $logos_public_folder = '/' . $logos_root_folder  . '/' . $data['cat_alias'] . '/';
                     $logos_server_folder = $_SERVER['DOCUMENT_ROOT'] .  $logos_public_folder;
-                    
+
                     $svg_filename = preg_replace('#' . $params->get('logo_file_suffix') . '$#', '', $svg_id) . $params->get('logo_file_suffix') . '.svg';
                     $png_filename = str_replace('.svg', '.png', $svg_filename);
-                    
+
                     $svg_path = $logos_server_folder . $svg_filename;
                     $png_path = $logos_server_folder . $png_filename;
-                    
+
                     if (!file_exists($logos_server_folder)) {
                         mkdir($logos_server_folder, 0775, true);
                     }
-                    
+
                     // Temporarily write the svg to a file:
-                    
+
                     file_put_contents($svg_path, $image->toXMLString());
-                    
-                    
+
+
                     $im = new Imagick();
                     $im->readImageBlob(file_get_contents($svg_path));
                     $im->setImageFormat("png24");
                     $im->writeImage($png_path);
                     $im->clear();
                     $im->destroy();
-                    
-                    // Finish off the SVG - note the template should use file_get_contents from the 
+
+                    // Finish off the SVG - note the template should use file_get_contents from the
                     // generated SVG, the data['logo_svg'] that's stored in the database should be
                     // pre-finalisation to avoid errors during subsequent saves.
                     $data['logo_svg']               = $image->toXMLString(false);
                     $data['logo_svg_path']          = $logos_public_folder . $svg_filename;
                     $data['logo_png_path']          = $logos_public_folder . $png_filename;
-                    
+
                     // Reset attributes:
                     $svg_doc->removeAttribute('width');
                     $svg_doc->setAttribute('height', $params->get('logo_image_height'));
-                    
+
                     // Override generated SVG with final output, without fallback for img tag use:
                     file_put_contents($svg_path, $image->toXMLString(false));
-                    
+
                     // Add the falback image tag for the generated SVG:
                     $svg_doc->addChild(new \SVG\Nodes\Embedded\SVGImage(''));
                     $img = $svg_doc->getElementsByTagName('image')[0];
@@ -284,7 +299,7 @@ class BrandsControllerRecord extends JControllerForm
                 $src  = $files['favicon_zip']['tmp_name'];
                 $dest = $dest_folder . $favicon_filename;
 
-                
+
                 if (JFile::upload($src, $dest)) {
 
                     // Unzip to folder:
@@ -388,7 +403,7 @@ class BrandsControllerRecord extends JControllerForm
 
         return (int) $val;
     }
-    
+
     /**
      * Strips punctuation from a string.
      *
@@ -453,7 +468,7 @@ class BrandsControllerRecord extends JControllerForm
             trigger_error('Function \'html_id\' expects argument 1 to be an string', E_USER_ERROR);
             return false;
         }
-        
+
         $return = trim(str_replace(' ', '-', strtolower(JFile::makeSafe($text))));
         #$return = strtolower(trim(preg_replace('/\s+/', '-', $this->strip_punctuation($text))));
         return $return;

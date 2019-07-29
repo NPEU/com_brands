@@ -15,80 +15,34 @@ defined('_JEXEC') or die;
 class BrandsController extends JControllerLegacy
 {
     /**
-     * The default view for the display method.
+     * Method to display a view.
      *
-     * @var string
+     * @param   boolean  $cacheable  If true, the view output will be cached
+     * @param   array    $urlparams  An array of safe url parameters and their variable types,
+     *                               for valid values see {@link JFilterInput::clean()}.
+     *
+     * @return  JControllerLegacy  This object to support chaining.
      */
-    #protected $default_view = 'records';
-
-    /**
-     * Constructor
-     *
-     * @param   array  $config  Optional configuration array
-     *
-     */
-    public function __construct($config = array())
+    public function display($cacheable = false, $urlparams = false)
     {
-        parent::__construct($config);
-        JLoader::register('MenusHelper', JPATH_ADMINISTRATOR . '/components/com_menus/helpers/menus.php');
-        $this->addModelPath(JPATH_ADMINISTRATOR . '/components/com_menus/models');
-    }
+        require_once JPATH_COMPONENT . '/helpers/brands.php';
 
-    /**
-     * display task
-     *
-     * @return void
-     */
-    public function display($cachable = false, $urlparams = false)
-    {
-        // Get the document object.
-        $document = JFactory::getDocument();
+        $view   = $this->input->get('view', 'brands');
+        $layout = $this->input->get('layout', 'default');
+        $id     = $this->input->getInt('id');
 
-        // Set the default view name and format from the Request.
-        $vName   = $this->input->get('view', 'records');
-        $vFormat = $document->getType();
-        $lName   = $this->input->get('layout', 'default', 'string');
-
-        // Get and render the view.
-        if ($view = $this->getView($vName, $vFormat))
+        // Check for edit form.
+        if ($view == 'brand' && $layout == 'edit' && !$this->checkEditId('com_brands.edit.brand', $id))
         {
-            // Get the model for the view.
-            $model = $this->getModel($vName);
+            // Somehow the person just went to the form - we don't allow that.
+            $this->setError(JText::sprintf('JLIB_APPLICATION_ERROR_UNHELD_ID', $id));
+            $this->setMessage($this->getError(), 'error');
+            $this->setRedirect(JRoute::_('index.php?option=com_brands&view=brands', false));
 
-            // Push the model into the view (as default).
-            $view->setModel($model, true);
-            $view->setLayout($lName);
-
-            // Push document object into the view.
-            $view->document = $document;
-            
-            // Add style
-            BrandsHelper::addStyle();
-
-            // Load the submenu.
-			BrandsHelper::addSubmenu($vName);
-            
-			$view->display();
+            return false;
         }
 
-        return $this;
-        /*
-        
-        // Set default view if not set
-        JFactory::getApplication()->input->set('view', JFactory::getApplication()->input->get('view', 'records'));
-
-        $session = JFactory::getSession();
-        $registry = $session->get('registry');
-
-        // call parent behavior
-        parent::display($cachable, $urlparams);
-
-        // Add style
-        BrandsHelper::addStyle();
-
-        // Set the submenu
-        BrandsHelper::addSubmenu(JFactory::getApplication()->input->get('view'));
-        */
-        
+        return parent::display();
     }
 }
+

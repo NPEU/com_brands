@@ -10,9 +10,9 @@
 defined('_JEXEC') or die;
 
 /**
- * Brands Records Controller
+ * Brands Controller
  */
-class BrandsControllerRecords extends JControllerAdmin
+class BrandsControllerBrands extends JControllerAdmin
 {
     /**
      * Proxy for getModel.
@@ -23,10 +23,8 @@ class BrandsControllerRecords extends JControllerAdmin
      *
      * @return  object  The model.
      */
-    public function getModel($name = 'Record', $prefix = 'BrandsModel', $config = array('ignore_request' => true))
+    public function getModel($name = 'Brand', $prefix = 'BrandsModel', $config = array('ignore_request' => true))
     {
-        $model = parent::getModel($name, $prefix, $config);
-
-        return $model;
+        return parent::getModel($name, $prefix, $config);
     }
 }
