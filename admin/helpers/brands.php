@@ -45,39 +45,4 @@ class BrandsHelper extends JHelperContent
             $vName == 'categories'
         );
     }
-
-    /**
-     * Get the actions
-     */
-    public static function getActions($itemId = 0, $model = null)
-    {
-        jimport('joomla.access.access');
-        $user   = JFactory::getUser();
-        $result = new JObject;
-
-        if (empty($itemId)) {
-            $assetName = 'com_brands';
-        }
-        else {
-            $assetName = 'com_brands.brand.'.(int) $itemId;
-        }
-
-        $actions = JAccess::getActions('com_brands', 'component');
-
-        foreach ($actions as $action) {
-            $result->set($action->name, $user->authorise($action->name, $assetName));
-        }
-
-        // Check if user belongs to assigned category and permit edit if so:
-        if ($model) {
-            $item  = $model->getItem($itemId);
-
-            if (!!($user->authorise('core.edit', 'com_brands')
-            || $user->authorise('core.edit', 'com_content.category.' . $item->catid))) {
-                $result->set('core.edit', true);
-            }
-        }
-
-        return $result;
-    }
 }

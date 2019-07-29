@@ -132,7 +132,8 @@ class BrandsViewBrands extends JViewLegacy
     {
         return array(
             'a.state' => JText::_('COM_BRANDS_PUBLISHED'),
-            'a.title' => JText::_('COM_BRANDS_RECORDS_NAME'),
+            'a.name'  => JText::_('COM_BRANDS_RECORDS_NAME'),
             'a.id'    => JText::_('COM_BRANDS_ID')
         );
     }
+}

@@ -87,9 +87,9 @@ $listDirn    = $this->escape($this->state->get('list.direction'));
                         <?php endif; ?>
                         <?php if ($canEdit || $canEditOwn) : ?>
                             <a href="<?php echo JRoute::_('index.php?option=com_brands&task=brand.edit&id=' . (int) $item->id); ?>" title="<?php echo JText::_('COM_BRANDS_EDIT_RECORD'); ?>">
-                                <?php echo $this->escape($item->title); ?></a>
+                                <?php echo $this->escape($item->name); ?></a>
                         <?php else : ?>
-                                <?php echo $this->escape($item->title); ?>
+                                <?php echo $this->escape($item->name); ?>
                         <?php endif; ?>
                         <span class="small">
                             <?php echo JText::sprintf('JGLOBAL_LIST_ALIAS', $this->escape($item->alias)); ?>

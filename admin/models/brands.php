@@ -56,7 +56,7 @@ class BrandsModelBrands extends JModelList
      *
      * @note    Calling getState in this method will result in recursion.
      */
-    protected function populateState($ordering = 'a.title', $direction = 'asc')
+    protected function populateState($ordering = 'a.name', $direction = 'asc')
     {
         // Load the filter state.
         $this->setState('filter.search', $this->getUserStateFromRequest($this->context . '.filter.search', 'filter_search', '', 'string'));

@@ -133,12 +133,12 @@ class BrandsModelBrand extends JModelAdmin
         $date = JFactory::getDate();
         $user = JFactory::getUser();
 
-        $table->title = htmlspecialchars_decode($table->title, ENT_QUOTES);
+        $table->name = htmlspecialchars_decode($table->name, ENT_QUOTES);
         $table->alias = JApplicationHelper::stringURLSafe($table->alias);
 
         if (empty($table->alias))
         {
-            $table->alias = JApplicationHelper::stringURLSafe($table->title);
+            $table->alias = JApplicationHelper::stringURLSafe($table->name);
         }
 
         if (empty($table->id))
@@ -204,7 +204,7 @@ class BrandsModelBrand extends JModelAdmin
                     $msg = JText::_('COM_CONTENT_SAVE_WARNING');
                 }
 
-                #list($title, $alias) = $this->generateNewBrandsTitle($data['alias'], $data['name']);
+                #list($name, $alias) = $this->generateNewBrandsTitle($data['alias'], $data['name']);
                 list($name, $alias) = $this->generateNewTitle($data['alias'], $data['name']);
                 $data['alias'] = $alias;
 
@@ -233,7 +233,7 @@ class BrandsModelBrand extends JModelAdmin
 
         while ($table->load(array('alias' => $alias, 'catid' => $category_id)))
         {
-            if ($name == $table->title)
+            if ($name == $table->name)
             {
                 $name = JString::increment($name);
             }
