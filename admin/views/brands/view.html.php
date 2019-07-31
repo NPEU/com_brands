@@ -66,7 +66,7 @@ class BrandsViewBrands extends JViewLegacy
             $title .= "<span style='font-size: 0.5em; vertical-align: middle;'> (" . $this->pagination->total . ")</span>";
         }
 
-        JToolBarHelper::title($title, 'brand');
+        JToolBarHelper::title($title, 'color-palette');
         /*
         JToolBarHelper::addNew('brand.add');
         if (!empty($this->items)) {

@@ -76,7 +76,7 @@ class BrandsViewBrand extends JViewLegacy
 
         JToolbarHelper::title(
             JText::_('COM_BRANDS_MANAGER_' . ($checkedOut ? 'RECORD_VIEW' : ($isNew ? 'RECORD_ADD' : 'RECORD_EDIT'))),
-            'palette'
+            'color-palette'
         );
 
         // For new records, check the create permission.
