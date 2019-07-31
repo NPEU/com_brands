@@ -131,8 +131,8 @@ class BrandsViewBrands extends JViewLegacy
     protected function getSortFields()
     {
         return array(
-            'a.state' => JText::_('COM_BRANDS_PUBLISHED'),
             'a.name'  => JText::_('COM_BRANDS_RECORDS_NAME'),
+            'a.state' => JText::_('COM_BRANDS_PUBLISHED'),
             'a.id'    => JText::_('COM_BRANDS_ID')
         );
     }
