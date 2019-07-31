@@ -104,9 +104,14 @@ class BrandsModelBrands extends JModelList
         $db    = JFactory::getDbo();
         $query = $db->getQuery(true);
 
-        // Create the base select statement.
-        $query->select('a.*')
-              ->from($db->quoteName('#__brands') . ' AS a');
+        // Select the required fields from the table.
+		$query->select(
+			$this->getState(
+				'list.select',
+				'a.id, a.name, a.alias, a.catid, a.logo_svg_path, a.logo_png_path, a.checked_out, a.checked_out_time, a.created_by, a.state'
+			)
+		);
+		$query->from($db->quoteName('#__brands', 'a'));
 
         // Join the categories table again for the project group (delete if not using categories):
         $query->select('c.title AS category_title')
@@ -153,7 +158,7 @@ class BrandsModelBrands extends JModelList
 
         // Add the list ordering clause.
         $orderCol   = $this->state->get('list.ordering', 'a.name');
-        $orderDirn  = $this->state->get('list.direction', 'ASCC');
+        $orderDirn  = $this->state->get('list.direction', 'ASC');
 
         $query->order($db->escape($orderCol) . ' ' . $db->escape($orderDirn));
 

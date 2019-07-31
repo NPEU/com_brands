@@ -47,16 +47,16 @@ $listDirn    = $this->escape($this->state->get('list.direction'));
                         <?php echo JHtml::_('grid.checkall'); ?>
                     </th>
                     <th width="20%">
-                        <?php echo JHtml::_('searchtools.sort', 'COM_BRANDS_RECORDS_NAME', 'name', $listDirn, $listOrder); ?>
+                        <?php echo JHtml::_('searchtools.sort', 'COM_BRANDS_RECORDS_NAME', 'a.name', $listDirn, $listOrder); ?>
                     </th>
                     <th width="20%">
                         <?php echo JText::_('COM_BRANDS_RECORDS_LOGO'); ?>
                     </th>
                     <th width="10%">
-                        <?php echo JHtml::_('searchtools.sort', 'COM_BRANDS_PUBLISHED', 'state', $listDirn, $listOrder); ?>
+                        <?php echo JHtml::_('searchtools.sort', 'COM_BRANDS_PUBLISHED', 'a.state', $listDirn, $listOrder); ?>
                     </th>
                     <th width="4%">
-                        <?php echo JHtml::_('searchtools.sort', 'COM_BRANDS_ID', 'id', $listDirn, $listOrder); ?>
+                        <?php echo JHtml::_('searchtools.sort', 'COM_BRANDS_ID', 'a.id', $listDirn, $listOrder); ?>
                     </th>
                 </tr>
             </thead>

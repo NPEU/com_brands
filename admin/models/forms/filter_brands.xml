@@ -36,14 +36,14 @@
             type="list"
             onchange="this.form.submit();"
             default="a.name ASC"
-            >
+        >
             <option value="">JGLOBAL_SORT_BY</option>
-            <option value="a.state ASC">JSTATUS_ASC</option>
-            <option value="a.state DESC">JSTATUS_DESC</option>
-            <option value="a.name ASC">JGLOBAL_TITLE_ASC</option>
-            <option value="a.name DESC">JGLOBAL_TITLE_DESC</option>
+            <option value="a.name ASC">COM_BRANDS_RECORDS_NAME_ASC</option>
+            <option value="a.name DESC">COM_BRANDS_RECORDS_NAME_DESC</option>
             <option value="category_title ASC">JCATEGORY_ASC</option>
             <option value="category_title DESC">JCATEGORY_DESC</option>
+            <option value="a.state ASC">COM_BRANDS_RECORDS_PUBLISHED_ASC</option>
+            <option value="a.state DESC">COM_BRANDS_RECORDS_PUBLISHED_DESC</option>
             <option value="a.id ASC">JGRID_HEADING_ID_ASC</option>
             <option value="a.id DESC">JGRID_HEADING_ID_DESC</option>
         </field>
