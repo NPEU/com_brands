@@ -42,6 +42,9 @@ class BrandsController extends JControllerLegacy
             return false;
         }
 
+        // Add style
+        BrandsHelper::addStyle();
+
         return parent::display();
     }
 }
