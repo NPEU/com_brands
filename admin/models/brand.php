@@ -94,7 +94,7 @@ class BrandsModelBrand extends JModelAdmin
     {
         // Check the session for previously entered form data.
         $data = JFactory::getApplication()->getUserState(
-            'com_brands.edit.brands.data',
+            'com_brands.edit.brand.data',
             array()
         );
 
