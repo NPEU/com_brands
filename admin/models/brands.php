@@ -105,13 +105,13 @@ class BrandsModelBrands extends JModelList
         $query = $db->getQuery(true);
 
         // Select the required fields from the table.
-		$query->select(
-			$this->getState(
-				'list.select',
-				'a.id, a.name, a.alias, a.catid, a.logo_svg_path, a.logo_png_path, a.checked_out, a.checked_out_time, a.created_by, a.state'
-			)
-		);
-		$query->from($db->quoteName('#__brands', 'a'));
+        $query->select(
+            $this->getState(
+                'list.select',
+                'a.id, a.name, a.alias, a.catid, a.logo_svg_path, a.logo_png_path, a.checked_out, a.checked_out_time, a.created_by, a.state'
+            )
+        );
+        $query->from($db->quoteName('#__brands', 'a'));
 
         // Join the categories table again for the project group (delete if not using categories):
         $query->select('c.title AS category_title')
