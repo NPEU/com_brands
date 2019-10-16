@@ -114,7 +114,7 @@ class BrandsModelBrand extends JModelAdmin
      */
     public function getItem($pk = null)
     {
-        $item = parent:: getItem($pk);
+        $item = parent::getItem($pk);
         $cat = JTable::getInstance('category');
         $cat->load($item->catid);
         $item->cat_alias = $cat->alias;
@@ -205,7 +205,7 @@ class BrandsModelBrand extends JModelAdmin
                 }
 
                 #list($name, $alias) = $this->generateNewBrandsTitle($data['alias'], $data['name']);
-                list($name, $alias) = $this->generateNewTitle($data['alias'], $data['name']);
+                list($name, $alias) = $this->generateNewTitle($data['catid'], $data['alias'], $data['name']);
                 $data['alias'] = $alias;
 
                 if (isset($msg)) {
