@@ -163,7 +163,7 @@ class BrandsControllerBrand extends JControllerForm
                     $svg_errors[] = 'COM_BRANDS_ERROR_SVG_HAS_IMAGE';
                 }
 
-                // Inferance-level checks:
+                // Inference-level checks:
                 // ----------------------
 
                 if (count($svg_errors) == 0 ) {
@@ -237,7 +237,7 @@ class BrandsControllerBrand extends JControllerForm
                     // Override generated SVG with final output, without fallback for img tag use:
                     file_put_contents($svg_path, $image->toXMLString(false));
 
-                    // Add the falback image tag for the generated SVG:
+                    // Add the fallback image tag for the generated SVG:
                     $svg_doc->addChild(new \SVG\Nodes\Embedded\SVGImage(''));
                     $img = $svg_doc->getElementsByTagName('image')[0];
                     $img->setAttribute('src', $logos_public_folder . $png_filename);
