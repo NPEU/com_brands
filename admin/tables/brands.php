@@ -12,7 +12,7 @@ defined('_JEXEC') or die;
 /**
  * Brands Table class
  */
-class BrandsTablebrands extends JTable
+class BrandsTableBrands extends JTable
 {
     /**
      * Ensure the params is json encoded in the bind method
