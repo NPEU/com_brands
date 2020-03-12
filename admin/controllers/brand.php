@@ -33,6 +33,20 @@ class BrandsControllerBrand extends JControllerForm
         $this->view_list = 'brands';
     }
 
+    protected function styleToAttr($str) {
+        preg_match_all('#style="([^"]*)"#', $str, $matches, PREG_SET_ORDER);
+
+        foreach ($matches as $match) {
+            $attribs = explode(';', trim($match[1], ';'));
+            $attrib_str = '';
+            foreach ($attribs as $attrib) {
+                $attrib_str .= str_replace(': ', '="', $attrib) . '" ';
+            }
+            $str = str_replace($match[0], $attrib_str, $str);
+        }
+
+        return $str;
+    }
     /**
      * Method to save a record.
      *
@@ -56,8 +70,6 @@ class BrandsControllerBrand extends JControllerForm
         $data      = $app->input->post->get($control, array(), 'array');
         $view_item = $this->view_item;
 
-        #echo '<pre>'; var_dump($data); echo '</pre>'; exit;
-
         // SNIP: Taken from libraries/src/MVC/Controller/FormController.php save method, because we
         // can't call that first.
 
@@ -79,6 +91,9 @@ class BrandsControllerBrand extends JControllerForm
         if(!empty($data['logo_svg'])) {
             $svg = $data['logo_svg'];
 
+            // Illustrator adds 'xml:space="preserve"'. It's easier to remove this as a string:
+            $svg = str_replace('xml:space="preserve"', '', $svg);
+
             // Validate SVG:
             $svg_is_valid = true;
 
@@ -89,7 +104,6 @@ class BrandsControllerBrand extends JControllerForm
                 return false;
             }
             set_error_handler('tmpErrorHandler');
-
 
             try {
                 $image = @SVG::fromString($svg);
@@ -115,9 +129,22 @@ class BrandsControllerBrand extends JControllerForm
             } else {
                 $svg_errors = array();
                 $svg_doc = $image->getDocument();
+
+
+                // Tidy necessary attributes (e.g. from Illustrator):
+                $svg_doc->removeAttribute('id');
+                $svg_doc->removeAttribute('version');
+                $svg_doc->removeAttribute('x');
+                $svg_doc->removeAttribute('y');
+                $svg_doc->removeStyle('enable-background');
+                //$svg_doc->removeAttribute('xmlns:xml');
+
+
                 $svg_xml_string = (string) $image;
                 $svg_xml = new SimpleXMLElement($svg_xml_string);
                 $svg_xml->registerXPathNamespace('svg', 'http://www.w3.org/2000/svg');
+
+                $namespaces = $svg_xml->getNamespaces(true);
 
                 $svg_id = empty($data['alias'])
                         ? $this->html_id($data['name'])
@@ -187,6 +214,10 @@ class BrandsControllerBrand extends JControllerForm
                     // (we might as well do this even if it already exists and is the same)
                     $svg_doc->setAttribute('aria-labelledby',  $doc_title_id);
 
+
+
+
+
                     // Generate a fallback PNG and add the IMAGE to the SVG:
                     // php-svg does a terrible job of rasterising at the moment, unfortunately, but
                     // this is how to do it: (note 4x image size helps improve aliasing)
@@ -230,14 +261,14 @@ class BrandsControllerBrand extends JControllerForm
                     $svg_doc->removeAttribute('width');
                     $svg_doc->removeAttribute('height');
 
-                    $data['logo_svg']               = $image->toXMLString(false);
+                    $data['logo_svg']               = $this->styleToAttr($image->toXMLString(false));
                     $data['logo_svg_path']          = $logos_public_folder . $svg_filename;
                     $data['logo_png_path']          = $logos_public_folder . $png_filename;
 
 
                     // Override generated SVG with final output, without fallback and height for
                     // img tag use:
-                    file_put_contents($svg_path, $image->toXMLString(false));
+                    file_put_contents($svg_path, $this->styleToAttr($image->toXMLString(false)));
 
                     $svg_doc->setAttribute('height', $params->get('logo_image_height'));
 
@@ -249,7 +280,7 @@ class BrandsControllerBrand extends JControllerForm
                     $img->setAttribute('height', $params->get('logo_image_height'));
 
                     // Add the logo with fallback to the data for direct HTML use:
-                    $data['logo_svg_with_fallback'] = $image->toXMLString(false);
+                    $data['logo_svg_with_fallback'] = $this->styleToAttr($image->toXMLString(false));
                 } else {
                     // Redirect and throw an error message:
                     foreach ($svg_errors as $svg_error) {
