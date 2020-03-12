@@ -188,12 +188,12 @@ class BrandsControllerBrand extends JControllerForm
                     $svg_doc->setAttribute('aria-labelledby',  $doc_title_id);
 
                     // Generate a fallback PNG and add the IMAGE to the SVG:
-                    // php-svg does a terrible job of rasterising at the moment, unfortuately, but this is how
-                    // to do it: (not 4x image size helps improve aliasing)
+                    // php-svg does a terrible job of rasterising at the moment, unfortunately, but
+                    // this is how to do it: (note 4x image size helps improve aliasing)
                     #$raster = $image->toRasterImage($doc_viewbox[2] * 4, $doc_viewbox[3] * 4);
                     #imagepng($raster, $doc_id . '.png', 0);
 
-                    $svg_doc->setAttribute('height', $doc_vheight * 4);
+                    $svg_doc->setAttribute('height', ($doc_vheight * 4));
                     $svg_doc->setAttribute('width', ($doc_vwidth * 4));
 
                     $logos_root_folder = trim($params->get('logo_folder'), '/');
@@ -212,7 +212,6 @@ class BrandsControllerBrand extends JControllerForm
                     }
 
                     // Temporarily write the svg to a file:
-
                     file_put_contents($svg_path, $image->toXMLString());
 
 
@@ -226,16 +225,21 @@ class BrandsControllerBrand extends JControllerForm
                     // Finish off the SVG - note the template should use file_get_contents from the
                     // generated SVG, the data['logo_svg'] that's stored in the database should be
                     // pre-finalisation to avoid errors during subsequent saves.
+
+                    // Reset attributes:
+                    $svg_doc->removeAttribute('width');
+                    $svg_doc->removeAttribute('height');
+
                     $data['logo_svg']               = $image->toXMLString(false);
                     $data['logo_svg_path']          = $logos_public_folder . $svg_filename;
                     $data['logo_png_path']          = $logos_public_folder . $png_filename;
 
-                    // Reset attributes:
-                    $svg_doc->removeAttribute('width');
-                    $svg_doc->setAttribute('height', $params->get('logo_image_height'));
 
-                    // Override generated SVG with final output, without fallback for img tag use:
+                    // Override generated SVG with final output, without fallback and height for
+                    // img tag use:
                     file_put_contents($svg_path, $image->toXMLString(false));
+
+                    $svg_doc->setAttribute('height', $params->get('logo_image_height'));
 
                     // Add the fallback image tag for the generated SVG:
                     $svg_doc->addChild(new \SVG\Nodes\Embedded\SVGImage(''));
