@@ -198,7 +198,7 @@ class BrandsModelBrand extends JModelAdmin
                     $data['alias'] = JFilterOutput::stringURLSafe($data['name']);
                 }
 
-                $table = JTable::getInstance('Brand', 'BrandsTable');
+                $table = JTable::getInstance('Brands', 'BrandsTable');
 
                 if ($table->load(array('alias' => $data['alias']))) {
                     $msg = JText::_('COM_CONTENT_SAVE_WARNING');
