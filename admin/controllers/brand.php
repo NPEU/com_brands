@@ -200,6 +200,11 @@ class BrandsControllerBrand extends JControllerForm
                     if (!array_key_exists('role', $doc_attributes) || $doc_attributes['role'] != 'img') {
                        $svg_doc->setAttribute('role', 'img');
                     }
+                    
+                    // Add focusable false to SVG if not present:
+                    if (!array_key_exists('focusable', $doc_attributes) || $doc_attributes['focusable'] != 'false') {
+                       $svg_doc->setAttribute('focusable', 'false');
+                    }
 
                     // Add an id to TITLE if not present:
                     if (($doc_id = $title->getAttribute('id')) == '') {
