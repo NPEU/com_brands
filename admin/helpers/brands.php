@@ -33,4 +33,41 @@ class BrandsHelper extends JHelperContent
             $vName == 'categories'
         );
     }
+    
+    /**
+     * Tidy SVG.
+     *
+     * @param   string  The SVG.
+     * @param   bool  Whether to minify output or not.
+     */
+    public static function tidySVG($str, $minify = true) {
+        
+        if ($minify) {
+            $indent = false;
+        } else {
+            $indent = true;
+        }
+        
+        ob_start();
+        $tidy = new tidy;
+        $config = array(
+            'indent' => $indent,
+            'wrap' => 0,
+            'clean' => true,
+            'show-body-only' => true,
+            'input-xml' => true,
+            'output-xml' => true,
+            'newline' => 'LF'
+        );
+        $tidy->parseString($str, $config, 'utf8');
+        $tidy->cleanRepair();
+        $input = $tidy;
+        
+        if ($minify) {
+            return preg_replace('#\n#', '', $input->value);
+        } else {
+            return $input->value;
+        }
+        
+    }
 }

@@ -19,6 +19,9 @@ $language_tag = 'en-GB';
 $reload = true;
 $lang->load($extension, $base_dir, $language_tag, $reload);*/
 
+// Require helper file
+JLoader::register('BrandsHelper', JPATH_COMPONENT . '/helpers/brands.php');
+
 if (!JFactory::getUser()->authorise('core.manage', 'com_brands'))
 {
     throw new JAccessExceptionNotallowed(JText::_('JERROR_ALERTNOAUTHOR'), 403);

@@ -47,6 +47,7 @@ class BrandsControllerBrand extends JControllerForm
 
         return $str;
     }
+    
     /**
      * Method to save a record.
      *
@@ -266,9 +267,9 @@ class BrandsControllerBrand extends JControllerForm
                     $svg_doc->removeAttribute('width');
                     $svg_doc->removeAttribute('height');
 
-                    $data['logo_svg']               = $this->styleToAttr($image->toXMLString(false));
-                    $data['logo_svg_path']          = $logos_public_folder . $svg_filename;
-                    $data['logo_png_path']          = $logos_public_folder . $png_filename;
+                    $data['logo_svg']      = BrandsHelper::tidySVG($this->styleToAttr($image->toXMLString(false)));
+                    $data['logo_svg_path'] = $logos_public_folder . $svg_filename;
+                    $data['logo_png_path'] = $logos_public_folder . $png_filename;
 
 
                     // Override generated SVG with final output, without fallback and height for
@@ -285,7 +286,9 @@ class BrandsControllerBrand extends JControllerForm
                     $img->setAttribute('height', $params->get('logo_image_height'));
 
                     // Add the logo with fallback to the data for direct HTML use:
-                    $data['logo_svg_with_fallback'] = $this->styleToAttr($image->toXMLString(false));
+                    $data['logo_svg_with_fallback'] = BrandsHelper::tidySVG($this->styleToAttr($image->toXMLString(false)));
+                    
+                    #echo '<pre>'; var_dump($data); echo '</pre>'; exit;
                 } else {
                     // Redirect and throw an error message:
                     foreach ($svg_errors as $svg_error) {

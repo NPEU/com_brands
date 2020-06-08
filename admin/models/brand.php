@@ -118,6 +118,9 @@ class BrandsModelBrand extends JModelAdmin
         $cat = JTable::getInstance('category');
         $cat->load($item->catid);
         $item->cat_alias = $cat->alias;
+        
+        // Format the SVG for easier viewing in the textbox:
+        $item->logo_svg = BrandsHelper::tidySVG($item->logo_svg, false);
         return $item;
     }
 
