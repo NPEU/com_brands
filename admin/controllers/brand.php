@@ -70,6 +70,9 @@ class BrandsControllerBrand extends JControllerForm
         $params    = clone JComponentHelper::getParams($option);
         $data      = $app->input->post->get($control, array(), 'array');
         $view_item = $this->view_item;
+        
+        $upload_file_permissions = octdec($params->get('upload_file_permissions', false));
+        $upload_file_group       = $params->get('upload_file_group', false);
 
         // SNIP: Taken from libraries/src/MVC/Controller/FormController.php save method, because we
         // can't call that first.
@@ -258,6 +261,19 @@ class BrandsControllerBrand extends JControllerForm
                     $im->writeImage($png_path);
                     $im->clear();
                     $im->destroy();
+                    
+                    // Did the file get generated?
+                    if (file_exists($png_path)) {
+                        // Set the file to our preferred permissions:
+                        if ($upload_file_permissions) {
+                            chmod($png_path, $upload_file_permissions);
+                        }
+
+                        // Set the file to belong to our preferred group:
+                        if ($upload_file_group) {
+                            chgrp($png_path, $upload_file_group);
+                        }
+                    }
 
                     // Finish off the SVG - note the template should use file_get_contents from the
                     // generated SVG, the data['logo_svg'] that's stored in the database should be
@@ -275,6 +291,19 @@ class BrandsControllerBrand extends JControllerForm
                     // Override generated SVG with final output, without fallback and height for
                     // img tag use:
                     file_put_contents($svg_path, $this->styleToAttr($image->toXMLString(false)));
+                    
+                    // Did the file get generated?
+                    if (file_exists($svg_path)) {
+                        // Set the file to our preferred permissions:
+                        if ($upload_file_permissions) {
+                            chmod($svg_path, $upload_file_permissions);
+                        }
+
+                        // Set the file to belong to our preferred group:
+                        if ($upload_file_group) {
+                            chgrp($svg_path, $upload_file_group);
+                        }
+                    }
 
                     $svg_doc->setAttribute('height', $params->get('logo_image_height'));
 
