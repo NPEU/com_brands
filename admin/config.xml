@@ -32,6 +32,20 @@
             description="COM_BRANDS_CONFIG_FAVICON_ZIP_FOLDER_DESC"
             default=""
         />
+        <field
+              name="upload_file_permissions"
+              type="number"
+              label="COM_BRANDS_CONFIG_FILEPERMS_LABEL"
+              description="COM_BRANDS_CONFIG_FILEPERMS_DESC"
+              default=""
+           />
+           <field
+              name="upload_file_group"
+              type="text"
+              label="COM_BRANDS_CONFIG_FILEGRP_LABEL"
+              description="COM_BRANDS_CONFIG_FILEGRP_DESC"
+              default=""
+           />
     </fieldset>
     <fieldset name="permissions"
         description="JCONFIG_PERMISSIONS_DESC"
