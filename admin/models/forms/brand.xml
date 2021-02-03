@@ -68,7 +68,7 @@
             description="COM_BRANDS_CATEGORY_DESC"
             required="true"
             >
-             <option value="0">JOPTION_SELECT_CATEGORY</option>
+             <option value="">JOPTION_SELECT_CATEGORY</option>
         </field>
         <field
             name="primary_colour"
