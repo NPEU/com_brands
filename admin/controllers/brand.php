@@ -47,7 +47,7 @@ class BrandsControllerBrand extends JControllerForm
 
         return $str;
     }
-    
+
     /**
      * Method to save a record.
      *
@@ -70,7 +70,7 @@ class BrandsControllerBrand extends JControllerForm
         $params    = clone JComponentHelper::getParams($option);
         $data      = $app->input->post->get($control, array(), 'array');
         $view_item = $this->view_item;
-        
+
         $upload_folder_permissions = octdec($params->get('upload_folder_permissions', false));
         $upload_file_permissions = octdec($params->get('upload_file_permissions', false));
         $upload_file_group       = $params->get('upload_file_group', false);
@@ -206,7 +206,7 @@ class BrandsControllerBrand extends JControllerForm
                     if (!array_key_exists('role', $doc_attributes) || $doc_attributes['role'] != 'img') {
                        $svg_doc->setAttribute('role', 'img');
                     }
-                    
+
                     // Add focusable false to SVG if not present:
                     if (!array_key_exists('focusable', $doc_attributes) || $doc_attributes['focusable'] != 'false') {
                        $svg_doc->setAttribute('focusable', 'false');
@@ -251,10 +251,20 @@ class BrandsControllerBrand extends JControllerForm
 
                     if (!file_exists($logos_server_folder)) {
                         mkdir($logos_server_folder, 0775, true);
-                        
+
                         // Set the folder to our preferred permissions:
                         if ($upload_folder_permissions) {
                             chmod($logos_server_folder, $upload_folder_permissions);
+                        }
+                        
+                        // Set the folder to belong to our preferred group:
+                        if ($upload_file_group) {
+                            chgrp($logos_server_folder, $upload_file_group);
+                        }
+
+                        // Set the folder to belong to our preferred owner:
+                        if ($upload_file_owner) {
+                            chown($logos_server_folder, $upload_file_owner);
                         }
                     }
 
@@ -268,7 +278,7 @@ class BrandsControllerBrand extends JControllerForm
                     $im->writeImage($png_path);
                     $im->clear();
                     $im->destroy();
-                    
+
                     // Did the file get generated?
                     if (file_exists($png_path)) {
                         // Set the file to our preferred permissions:
@@ -280,7 +290,7 @@ class BrandsControllerBrand extends JControllerForm
                         if ($upload_file_group) {
                             chgrp($png_path, $upload_file_group);
                         }
-                        
+
                         // Set the file to belong to our preferred owner:
                         if ($upload_file_owner) {
                             chown($png_path, $upload_file_owner);
@@ -303,9 +313,10 @@ class BrandsControllerBrand extends JControllerForm
                     // Override generated SVG with final output, without fallback and height for
                     // img tag use:
                     file_put_contents($svg_path, $this->styleToAttr($image->toXMLString(false)));
-                    
+
                     // Did the file get generated?
                     if (file_exists($svg_path)) {
+                    
                         // Set the file to our preferred permissions:
                         if ($upload_file_permissions) {
                             chmod($svg_path, $upload_file_permissions);
@@ -315,7 +326,7 @@ class BrandsControllerBrand extends JControllerForm
                         if ($upload_file_group) {
                             chgrp($svg_path, $upload_file_group);
                         }
-                        
+
                         // Set the file to belong to our preferred owner:
                         if ($upload_file_owner) {
                             chown($svg_path, $upload_file_owner);
@@ -333,7 +344,7 @@ class BrandsControllerBrand extends JControllerForm
 
                     // Add the logo with fallback to the data for direct HTML use:
                     $data['logo_svg_with_fallback'] = BrandsHelper::tidySVG($this->styleToAttr($image->toXMLString(false)));
-                    
+
                     #echo '<pre>'; var_dump($data); echo '</pre>'; exit;
                 } else {
                     // Redirect and throw an error message:
@@ -388,6 +399,16 @@ class BrandsControllerBrand extends JControllerForm
                     if ($upload_folder_permissions) {
                         chmod($dest_folder, $upload_folder_permissions);
                     }
+
+                    // Set the folder to belong to our preferred group:
+                    if ($upload_file_group) {
+                        chgrp($dest_folder, $upload_file_group);
+                    }
+
+                    // Set the folder to belong to our preferred owner:
+                    if ($upload_file_owner) {
+                        chown($dest_folder, $upload_file_owner);
+                    }
                 }
 
                 $src  = $files['favicon_zip']['tmp_name'];
@@ -401,6 +422,16 @@ class BrandsControllerBrand extends JControllerForm
                         chmod($dest, $upload_file_permissions);
                     }
 
+                    // Set the file to belong to our preferred group:
+                    if ($upload_file_group) {
+                        chgrp($dest, $upload_file_group);
+                    }
+
+                    // Set the file to belong to our preferred owner:
+                    if ($upload_file_owner) {
+                        chown($dest, $upload_file_owner);
+                    }
+
                     // Unzip to folder:
                     $zip = new ZipArchive;
                     if ($zip->open($dest) === true) {
@@ -409,7 +440,7 @@ class BrandsControllerBrand extends JControllerForm
                             $fileinfo = pathinfo($filename);
                             #echo '<pre>'; var_dump($brand_favicon_folder . $fileinfo['basename']); echo '</pre>';
                             copy('zip://' . $dest . '#' . $filename, $dest_folder . $fileinfo['basename']);
-                            
+
                             // Set the file to our preferred permissions:
                             if ($upload_file_permissions) {
                                 chmod($dest_folder . $fileinfo['basename'], $upload_file_permissions);
@@ -419,7 +450,7 @@ class BrandsControllerBrand extends JControllerForm
                             if ($upload_file_group) {
                                 chgrp($dest_folder . $fileinfo['basename'], $upload_file_group);
                             }
-                            
+
                             // Set the file to belong to our preferred owner:
                             if ($upload_file_owner) {
                                 chown($dest_folder . $fileinfo['basename'], $upload_file_owner);
