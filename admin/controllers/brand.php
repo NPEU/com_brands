@@ -76,6 +76,14 @@ class BrandsControllerBrand extends JControllerForm
         $upload_file_group       = $params->get('upload_file_group', false);
         $upload_file_owner       = $params->get('upload_file_owner', false);
 
+        // We need to get the cat_alias if it's not set (it won't be for new saves and if it's not.
+        // we get logo files generated in the wrong place).
+        if (empty($data['cat_alias'])) {
+            $cat = JTable::getInstance('category');
+            $cat->load($data['catid']);
+            $data['cat_alias'] = $cat->alias;
+        }
+
         // SNIP: Taken from libraries/src/MVC/Controller/FormController.php save method, because we
         // can't call that first.
 
@@ -256,7 +264,7 @@ class BrandsControllerBrand extends JControllerForm
                         if ($upload_folder_permissions) {
                             chmod($logos_server_folder, $upload_folder_permissions);
                         }
-                        
+
                         // Set the folder to belong to our preferred group:
                         if ($upload_file_group) {
                             chgrp($logos_server_folder, $upload_file_group);
@@ -316,7 +324,7 @@ class BrandsControllerBrand extends JControllerForm
 
                     // Did the file get generated?
                     if (file_exists($svg_path)) {
-                    
+
                         // Set the file to our preferred permissions:
                         if ($upload_file_permissions) {
                             chmod($svg_path, $upload_file_permissions);
@@ -394,7 +402,7 @@ class BrandsControllerBrand extends JControllerForm
 
                 if (!file_exists($dest_folder)) {
                     mkdir($dest_folder);
-                    
+
                     // Set the folder to our preferred permissions:
                     if ($upload_folder_permissions) {
                         chmod($dest_folder, $upload_folder_permissions);
