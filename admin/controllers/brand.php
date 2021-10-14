@@ -341,7 +341,12 @@ class BrandsControllerBrand extends JControllerForm
                         }
                     }
 
-                    $svg_doc->setAttribute('height', $params->get('logo_image_height'));
+                    $logo_image_height = $params->get('logo_image_height');
+                    if (!empty($data['params']['logo_image_height'])) {
+                        $logo_image_height = $data['params']['logo_image_height'];
+                    }
+
+                    $svg_doc->setAttribute('height', $logo_image_height);
 
                     // Add the fallback image tag for the generated SVG:
                     $svg_doc->addChild(new \SVG\Nodes\Embedded\SVGImage(''));

@@ -119,4 +119,18 @@
             accept="application/x-compressed,application/x-zip-compressed,application/zip,multipart/x-zip"
         />
     </fieldset>
+    <fields name="params">
+        <fieldset
+            name="options"
+            label="COM_BRANDS_FIELDSET_OPTIONS_LABEL"
+        >
+            <field
+                name="logo_image_height"
+                type="int"
+                label="COM_BRANDS_LOGO_IMAGE_HEIGHT_LABEL"
+                description="COM_BRANDS_LOGO_IMAGE_HEIGHT_DESC"
+                default=""
+            />
+        </fieldset>
+    </fields>
 </form>
