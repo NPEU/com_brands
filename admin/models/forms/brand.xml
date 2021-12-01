@@ -131,6 +131,13 @@
                 description="COM_BRANDS_LOGO_IMAGE_HEIGHT_DESC"
                 default=""
             />
+            <field
+                name="logo_url"
+                type="text"
+                label="COM_BRANDS_LOGO_URL_LABEL"
+                description="COM_BRANDS_LOGO_URL_DESC"
+                default=""
+            />
         </fieldset>
     </fields>
 </form>
