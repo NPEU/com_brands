@@ -98,6 +98,35 @@
             class="monospace"
             rows="10"
         />
+        <field
+            name="upload_favicons"
+            type="radio"
+            label="COM_BRANDS_UPLOAD_FAVICONS_LABEL"
+            description="COM_BRANDS_UPLOAD_FAVICONS_DESC"
+            class="btn-group btn-group-yesno"
+            default="0"
+            >
+            <option value="0">JNO</option>
+            <option value="1">JYES</option>
+        </field>
+        <field
+            name="icon_svg"
+            type="textarea"
+            label="COM_BRANDS_ICON_SVG_LABEL"
+            description="COM_BRANDS_ICON_SVG_DESC"
+            filter="raw"
+            class="monospace"
+            rows="10"
+            showon="upload_favicons:0"
+        />
+        <field
+            name="favicon_zip"
+            type="file"
+            label="COM_BRANDS_FAVICON_LABEL"
+            description="COM_BRANDS_FAVICON_DESC"
+            accept="application/x-compressed,application/x-zip-compressed,application/zip,multipart/x-zip"
+            showon="upload_favicons:1"
+        />
         <field name="state" type="list" label="JSTATUS"
             description="JFIELD_PUBLISHED_DESC" class="chzn-color-state"
             filter="intval" size="1" default="1"
@@ -111,13 +140,6 @@
             <option value="-2">
                 JTRASHED</option>
         </field>
-        <field
-            name="favicon_zip"
-            type="file"
-            label="COM_BRANDS_FAVICON_LABEL"
-            description="COM_BRANDS_FAVICON_DESC"
-            accept="application/x-compressed,application/x-zip-compressed,application/zip,multipart/x-zip"
-        />
     </fieldset>
     <fields name="params">
         <fieldset

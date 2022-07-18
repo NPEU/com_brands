@@ -18,7 +18,6 @@ use SVG\SVG;
  */
 class BrandsControllerBrand extends JControllerForm
 {
-
     /**
      * Constructor.
      *
@@ -71,6 +70,8 @@ class BrandsControllerBrand extends JControllerForm
         $data      = $app->input->post->get($control, array(), 'array');
         $view_item = $this->view_item;
 
+        //echo '<pre>'; var_dump($data); echo '</pre>'; exit;
+
         $upload_folder_permissions = octdec($params->get('upload_folder_permissions', false));
         $upload_file_permissions = octdec($params->get('upload_file_permissions', false));
         $upload_file_group       = $params->get('upload_file_group', false);
@@ -98,8 +99,18 @@ class BrandsControllerBrand extends JControllerForm
         }
 
         $recordId = $this->input->getInt($urlVar);
-        // End SNIP
 
+        // End SNIP
+        $old_data = $model->getItem($recordId);
+        #echo '<pre>'; var_dump($old_data); echo '</pre>'; exit;
+
+        // SVG error handler function:
+        function tmpErrorHandler($errno, $errstr, $errfile, $errline) {
+            if (E_RECOVERABLE_ERROR === $errno) {
+                throw new ErrorException($errstr, $errno, 0, $errfile, $errline);
+            }
+            return false;
+        }
 
         // Process SVG:
         if(!empty($data['logo_svg'])) {
@@ -111,12 +122,6 @@ class BrandsControllerBrand extends JControllerForm
             // Validate SVG:
             $svg_is_valid = true;
 
-            function tmpErrorHandler($errno, $errstr, $errfile, $errline) {
-                if (E_RECOVERABLE_ERROR === $errno) {
-                    throw new ErrorException($errstr, $errno, 0, $errfile, $errline);
-                }
-                return false;
-            }
             set_error_handler('tmpErrorHandler');
 
             try {
@@ -130,7 +135,7 @@ class BrandsControllerBrand extends JControllerForm
 
             if (!$svg_is_valid) {
                 // Redirect and throw an error message:
-                JError::raiseWarning(100, sprintf(JText::_('COM_BRANDS_ERROR_SVG_INVALID')));
+                JError::raiseWarning(100, sprintf(JText::_('COM_BRANDS_ERROR_LOGO_SVG_INVALID')));
                 $app->setUserState($context . '.data', $data);
                 $this->setRedirect(
                     JRoute::_(
@@ -183,7 +188,7 @@ class BrandsControllerBrand extends JControllerForm
 
                 // Does the SVG have a viewBox. We produce an error here because we can't infer it:
                 if (!array_key_exists('viewBox', $doc_attributes)) {
-                    $svg_errors[] = 'COM_BRANDS_ERROR_SVG_MISSING_VIEWBOX';
+                    $svg_errors[] = 'COM_BRANDS_ERROR_LOGO_SVG_MISSING_VIEWBOX';
                 }
 
 
@@ -191,9 +196,9 @@ class BrandsControllerBrand extends JControllerForm
                 //$title = $svg_xml->xpath("//svg:title");
                 $title = $svg_doc->getElementsByTagName('title')[0];
                 if (is_null($title)) {
-                    $svg_errors[] = 'COM_BRANDS_ERROR_SVG_MISSING_TITLE';
+                    $svg_errors[] = 'COM_BRANDS_ERROR_LOGO_SVG_MISSING_TITLE';
                 } elseif (($doc_title = $title->getValue()) == '') {
-                    $svg_errors[] = 'COM_BRANDS_ERROR_SVG_EMPTY_TITLE';
+                    $svg_errors[] = 'COM_BRANDS_ERROR_LOGO_SVG_EMPTY_TITLE';
                 }
 
                 // Does the SVG contain an image? We'll be handling this in code, so reject ones that already
@@ -201,7 +206,7 @@ class BrandsControllerBrand extends JControllerForm
                 $result = $svg_xml->xpath("//svg:image");
 
                 if (count($result) !== 0) {
-                    $svg_errors[] = 'COM_BRANDS_ERROR_SVG_HAS_IMAGE';
+                    $svg_errors[] = 'COM_BRANDS_ERROR_LOGO_SVG_HAS_IMAGE';
                 }
 
                 // Inference-level checks:
@@ -378,6 +383,30 @@ class BrandsControllerBrand extends JControllerForm
         }
 
         // Process Favicon:
+        $favicon_zip_upload_root_folder = trim($params->get('favicon_zip_upload_folder'), '/');
+        #$favicon_zip_upload_root_folder = 'templates/npeu6/favicon';
+        $brand_favicon_folder = $favicon_zip_upload_root_folder . '/' . $svg_id . '/';
+        $dest_folder = $_SERVER['DOCUMENT_ROOT'] . '/' . $brand_favicon_folder;
+        
+        if (!file_exists($dest_folder)) {
+            mkdir($dest_folder);
+
+            // Set the folder to our preferred permissions:
+            if ($upload_folder_permissions) {
+                chmod($dest_folder, $upload_folder_permissions);
+            }
+
+            // Set the folder to belong to our preferred group:
+            if ($upload_file_group) {
+                chgrp($dest_folder, $upload_file_group);
+            }
+
+            // Set the folder to belong to our preferred owner:
+            if ($upload_file_owner) {
+                chown($dest_folder, $upload_file_owner);
+            }
+        }
+
         $favicon_filename =  $files['favicon_zip']['name'];
 
         if(!empty($favicon_filename)) {
@@ -399,30 +428,6 @@ class BrandsControllerBrand extends JControllerForm
             $accept_types = explode(',', str_replace(', ', ',', $form->getFieldAttribute('favicon_zip', 'accept')));
 
             if (in_array($files['favicon_zip']['type'], $accept_types)) {
-
-                $favicon_zip_upload_root_folder = trim($params->get('favicon_zip_upload_folder'), '/');
-                #$favicon_zip_upload_root_folder = 'templates/npeu6/favicon';
-                $brand_favicon_folder = $favicon_zip_upload_root_folder . '/' . $svg_id . '/';
-                $dest_folder = $_SERVER['DOCUMENT_ROOT'] . '/' . $brand_favicon_folder;
-
-                if (!file_exists($dest_folder)) {
-                    mkdir($dest_folder);
-
-                    // Set the folder to our preferred permissions:
-                    if ($upload_folder_permissions) {
-                        chmod($dest_folder, $upload_folder_permissions);
-                    }
-
-                    // Set the folder to belong to our preferred group:
-                    if ($upload_file_group) {
-                        chgrp($dest_folder, $upload_file_group);
-                    }
-
-                    // Set the folder to belong to our preferred owner:
-                    if ($upload_file_owner) {
-                        chown($dest_folder, $upload_file_owner);
-                    }
-                }
 
                 $src  = $files['favicon_zip']['tmp_name'];
                 $dest = $dest_folder . $favicon_filename;
@@ -513,6 +518,310 @@ class BrandsControllerBrand extends JControllerForm
                     )
                 );
                 return false;
+            }
+        } elseif(isset($data['upload_favicons']) && $data['upload_favicons'] === '0') {
+
+            // Process icon SVG:
+            if(!empty($data['icon_svg'])) {
+                $svg = $data['icon_svg'];
+
+                // Illustrator adds 'xml:space="preserve"'. It's easier to remove this as a string:
+                $svg = str_replace('xml:space="preserve"', '', $svg);
+
+                // Validate SVG:
+                $svg_is_valid = true;
+
+                set_error_handler('tmpErrorHandler');
+
+                try {
+                    $image = @SVG::fromString($svg);
+                } catch(Exception $e) {
+                    $svg_is_valid = false;
+                }
+
+                restore_error_handler();
+                ////
+
+                if (!$svg_is_valid) {
+                    // Redirect and throw an error message:
+                    JError::raiseWarning(100, sprintf(JText::_('COM_BRANDS_ERROR_ICON_SVG_INVALID')));
+                    $app->setUserState($context . '.data', $data);
+                    $this->setRedirect(
+                        JRoute::_(
+                            'index.php?option=' . $option . '&view=' . $view_item
+                            . $this->getRedirectToItemAppend($recordId, $key), false
+                        )
+                    );
+                    return false;
+
+                } else {
+                    $svg_errors = array();
+                    $svg_doc = $image->getDocument();
+
+
+                    // Tidy necessary attributes (e.g. from Illustrator):
+                    $svg_doc->removeAttribute('id');
+                    $svg_doc->removeAttribute('version');
+                    $svg_doc->removeAttribute('x');
+                    $svg_doc->removeAttribute('y');
+                    $svg_doc->removeStyle('enable-background');
+                    $svg_doc->removeAttribute('width');
+                    $svg_doc->removeAttribute('height');
+                    //$svg_doc->removeAttribute('xmlns:xml');
+
+
+                    /*
+                    $svg_xml_string = (string) $image;
+                    $svg_xml = new SimpleXMLElement($svg_xml_string);
+                    $svg_xml->registerXPathNamespace('svg', 'http://www.w3.org/2000/svg');
+
+                    $namespaces = $svg_xml->getNamespaces(true);
+
+                    $svg_id = empty($data['alias'])
+                            ? $this->html_id($data['name'])
+                            : $data['alias'];
+
+                    $doc_attributes = $svg_doc->getSerializableAttributes();
+                    $doc_title      = '';
+                    $doc_id         = '';
+                    $doc_title_id   = '';
+
+                    $doc_viewbox = $svg_doc->getViewBox();
+                    $doc_vwidth  = $doc_viewbox[2];
+                    $doc_vheight = $doc_viewbox[3];
+                    #$doc_ratio   = $doc_vwidth / $doc_vheight;
+                    */
+
+                    // Note php-svg adds xmlns="http://www.w3.org/2000/svg" and
+                    // xmlns:xlink="http://www.w3.org/1999/xlink" if they're missing.
+
+                    // Rejection-level checks:
+                    // ----------------------
+
+
+                    // Does the SVG have a viewBox. We produce an error here because we can't infer it:
+                    if (!array_key_exists('viewBox', $doc_attributes)) {
+                        $svg_errors[] = 'COM_BRANDS_ERROR_ICON_SVG_MISSING_VIEWBOX';
+                    }
+
+
+                    // Inference-level checks:
+                    // ----------------------
+
+                    if (count($svg_errors) == 0 ) {
+                        // Passed all rejection checks, so continue to process the SVG:
+                        $data['icon_svg'] = BrandsHelper::tidySVG($this->styleToAttr($image->toXMLString(false)));
+                        #echo '<pre>'; var_dump($data); echo '</pre>'; exit;
+
+                        $dest = $dest_folder . $data['alias'] . '_favicon.zip';
+                        // So we have the data, is it different to what we had before or is there no zip file?
+                        
+                        if (($data['icon_svg'] != $old_data->icon_svg) || !file_exists($dest)) {
+                            // No, lets generate new favicons
+                            $api_key = '8c99004e6cb170523db516982ba1d1c03f162ccc';
+                            $icon_path = '/templates/npeu6/favicon/'. $data['alias'] .'/';
+                            $icon_string = base64_encode($data['icon_svg']);
+
+                            $desktop_browser   = (object)[];
+                            $ios               = [
+                                'picture_aspect'   => 'background_and_margin',
+                                'margin'           => '4',
+                                'background_color' => '#ffffff',
+                                'assets'           => [
+                                    'ios6_and_prior_icons'      => false,
+                                    'ios7_and_later_icons'      => false,
+                                    'precomposed_icons'         => false,
+                                    'declare_only_default_icon' => true
+                                ]
+                            ];
+                            $windows           = [
+                                'picture_aspect'   => 'white_silhouette',
+                                'background_color' => '#da532c',
+                                'assets'           => [
+                                    'windows_80_ie_10_tile'       => false,
+                                    'windows_10_ie_11_edge_tiles' => [
+                                        'small'     => false,
+                                        'medium'    => true,
+                                        'big'       => false,
+                                        'rectangle' => false
+                                    ]
+                                ]
+                            ];
+                            $firefox_app       = (object)[];
+                            $android_chrome    = [
+                                'picture_aspect'   => 'no_change',
+                                'theme_color'      => '#ffffff',
+                                'margin'           => '8',
+                                'background_color' => '#ffffff',
+                                'manifest'         => [
+                                    'name'        => '',
+                                    'start_url'   => '',
+                                    'display'     => 'standalone',
+                                    'orientation' => 'not_set'
+                                ],
+                                'assets'           => [
+                                    'legacy_icon'          => false,
+                                    'low_resolution_icons' => false
+                                ]
+                            ];
+                            $safari_pinned_tab = [
+                                'picture_aspect' => 'silhouette',
+                                'threshold'      => 60.9375,
+                                'theme_color'    => '#5bbad5'
+                            ];
+                            $coast             = (object)[];
+                            $open_graph        = (object)[];
+                            $yandex_browser    = (object)[];
+
+
+                            $settings = (object)[];
+                            $version  = (object)[];
+
+
+                            $favicon_data = [];
+
+                            $favicon_data['favicon_generation'] = [
+                                'api_key' => $api_key,
+                                'master_picture' => [
+                                    'type' => 'inline',
+                                    'content'  => $icon_string
+                                ],
+                                'files_location' => [
+                                    'type'=>'path',
+                                    'path'=> $icon_path
+                                ],
+                                'favicon_design' => [
+                                    'desktop_browser'   => $desktop_browser,
+                                    'ios'               => $ios,
+                                    'windows'           => $windows,
+                                    'android_chrome'    => $android_chrome,
+                                    'safari_pinned_tab' => $safari_pinned_tab
+                                ],
+                                'settings' => $settings,
+                                'versioning' => $version
+                            ];
+
+                        }
+
+                        $favicon_json = json_encode($favicon_data);
+                        $favicon_url = 'https://realfavicongenerator.net/api/favicon';
+                        $proxy = 'dmzproxy.ndph.ox.ac.uk:8080';
+                        #echo '<pre>'; var_dump($favicon_json); echo '</pre>'; exit;
+
+                        //open connection
+                        $ch = curl_init();
+
+                        curl_setopt($ch, CURLOPT_URL, $favicon_url);
+                        curl_setopt($ch, CURLOPT_PROXY, $proxy);
+                        curl_setopt($ch, CURLOPT_FOLLOWLOCATION, 1);
+                        curl_setopt($ch, CURLOPT_POST, true);
+                        curl_setopt($ch, CURLOPT_POSTFIELDS, $favicon_json);
+                        //curl_setopt($ch, CURLOPT_SSL_VERIFYPEER, 0);
+                        curl_setopt($ch, CURLOPT_HTTPHEADER, array('Content-Type:application/json'));
+
+                        //So that curl_exec returns the contents of the cURL; rather than echoing it
+                        curl_setopt($ch, CURLOPT_RETURNTRANSFER, true);
+
+
+                        //execute post
+                        $favicon_output = curl_exec($ch);
+                        curl_close($ch);
+
+                        #echo '<pre>'; var_dump($favicon_output); echo '</pre>'; exit;
+                        $response_data = json_decode($favicon_output);
+                        $response_str  = json_encode($response_data, JSON_PRETTY_PRINT);
+                        if (!isset($response_data->favicon_generation_result)) {
+                            // There was an error generating the favicon:
+                            JError::raiseWarning(100, sprintf(JText::_('COM_BRANDS_ERROR_FAILED_FAVICON_GEN'), $favicon_url, $response_str));
+                            $app->setUserState($context . '.data', $data);
+                            $this->setRedirect(
+                                JRoute::_(
+                                    'index.php?option=' . $option . '&view=' . $view_item
+                                    . $this->getRedirectToItemAppend($recordId, $key), false
+                                )
+                            );
+                            return false;
+                        }
+
+                        $zip_src = $response_data->favicon_generation_result->favicon->package_url;                       
+                        
+                        $opts = [
+                            'http' => [
+                                'proxy'           => $proxy,
+                                'request_fulluri' => true
+                            ]
+                        ];
+                        $context = stream_context_create($opts);
+                        if (!copy($zip_src, $dest, $context)) {
+                            // There was an error downloading the favicon:
+                            JError::raiseWarning(100, sprintf(JText::_('COM_BRANDS_ERROR_FAILED_FAVICON_GETZIP'), $zip_src. $dest));
+                            $app->setUserState($context . '.data', $data);
+                            $this->setRedirect(
+                                JRoute::_(
+                                    'index.php?option=' . $option . '&view=' . $view_item
+                                    . $this->getRedirectToItemAppend($recordId, $key), false
+                                )
+                            );
+                            return false;
+                        }
+                        
+                        
+                        // Unzip to folder:
+                        $zip = new ZipArchive;
+                        if ($zip->open($dest) === true) {
+                            for($i = 0; $i < $zip->numFiles; $i++) {
+                                $filename = $zip->getNameIndex($i);
+                                $fileinfo = pathinfo($filename);
+                                #echo '<pre>'; var_dump($brand_favicon_folder . $fileinfo['basename']); echo '</pre>';
+                                copy('zip://' . $dest . '#' . $filename, $dest_folder . $fileinfo['basename']);
+
+                                // Set the file to our preferred permissions:
+                                if ($upload_file_permissions) {
+                                    chmod($dest_folder . $fileinfo['basename'], $upload_file_permissions);
+                                }
+
+                                // Set the file to belong to our preferred group:
+                                if ($upload_file_group) {
+                                    chgrp($dest_folder . $fileinfo['basename'], $upload_file_group);
+                                }
+
+                                // Set the file to belong to our preferred owner:
+                                if ($upload_file_owner) {
+                                    chown($dest_folder . $fileinfo['basename'], $upload_file_owner);
+                                }
+                            }
+                            $zip->close();
+                            $data['favicon_zip_path'] = '/' . $brand_favicon_folder . $favicon_filename;
+                        } else {
+                            // Redirect and throw an error message:
+                            JError::raiseWarning(100, sprintf(JText::_('COM_BRANDS_ERROR_FAILED_UNZIP'), $favicon_filename, $brand_favicon_folder));
+                            $app->setUserState($context . '.data', $data);
+                            $this->setRedirect(
+                                JRoute::_(
+                                    'index.php?option=' . $option . '&view=' . $view_item
+                                    . $this->getRedirectToItemAppend($recordId, $key), false
+                                )
+                            );
+                            return false;
+                        }
+
+
+                    } else {
+                        // Redirect and throw an error message:
+                        foreach ($svg_errors as $svg_error) {
+                            JError::raiseWarning(100, JText::_($svg_error));
+                        }
+                        $app->setUserState($context . '.data', $data);
+                        $this->setRedirect(
+                            JRoute::_(
+                                'index.php?option=' . $option . '&view=' . $view_item
+                                . $this->getRedirectToItemAppend($recordId, $key), false
+                            )
+                        );
+                        return false;
+                    }
+
+                }
             }
         }
 

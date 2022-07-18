@@ -34,6 +34,7 @@ $global_edit_fields = array(
 
 $fieldsets = $this->form->getFieldsets();
 ?>
+<?php JHtml::_('script', 'jui/cms.js', array('version' => 'auto', 'relative' => true)); ?>
 <form action="<?php echo JRoute::_('index.php?option=com_brands&layout=edit&id=' . (int) $this->item->id); ?>"
     method="post"
     name="adminForm"
@@ -59,13 +60,23 @@ $fieldsets = $this->form->getFieldsets();
                         <?php $hidden_fields = array(); foreach($form_fieldset as $field): if(!in_array($field->fieldname, $global_edit_fields)): ?>
                             <?php if($field->type == 'Hidden'){ $hidden_fields[] = $field->input; continue; } ?>
                             <?php if(!empty($field->getAttribute('hiddenLabel'))){ echo $field->input; continue; } ?>
-
-                            <div class="control-group">
+                            <?php /* Following 'showon' taken from /layouts/joomla/content/options_default.php */ ?>
+                            <?php $datashowon = ''; ?>
+                            <?php $groupClass = $field->type === 'Spacer' ? ' field-spacer' : ''; ?>
+                            <?php if ($field->showon) : ?>
+                                <?php JHtml::_('jquery.framework'); ?>
+                                <?php JHtml::_('script', 'jui/cms.js', array('version' => 'auto', 'relative' => true)); ?>
+                                <?php $datashowon = ' data-showon=\'' . json_encode(JFormHelper::parseShowOnConditions($field->showon, $field->formControl, $field->group)) . '\''; ?>
+                            <?php endif; ?>
+                            <div class="control-group<?php echo $groupClass; ?>"<?php echo $datashowon; ?>>
                                 <?php if ($field->type != 'Button'): ?>
                                 <div class="control-label">
                                     <?php echo JText::_($field->label); ?>
                                     <?php if ($field->fieldname == 'logo_svg' && !empty($this->item->logo_svg_path)) : ?><br>
                                     <img src="<?php echo $this->item->logo_svg_path; ?>" alt="Logo: <?php echo $this->item->name; ?>" height="30" style="height: 30px; margin-bottom: 1em;" onerror="this.src='<?php echo $this->item->logo_png_path; ?>'; this.onerror=null;">
+                                    <?php endif; ?>
+                                    <?php if ($field->fieldname == 'icon_svg' && !empty($this->item->logo_svg_path)) : ?><br>
+                                    <img src="data:image/svg+xml;base64,<?php echo base64_encode($this->item->icon_svg); ?>" alt="Logo: <?php echo $this->item->name; ?>" height="60" style="height: 60px; margin-bottom: 1em;">
                                     <?php endif; ?>
                                     <?php if ($field->fieldname == 'favicon_zip' && !empty($this->item->favicon_zip_path)) : ?><br>
                                     <a href="<?php echo $this->item->favicon_zip_path; ?>">Download Favicon Zip</a>
