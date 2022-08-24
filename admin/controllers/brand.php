@@ -383,31 +383,38 @@ class BrandsControllerBrand extends JControllerForm
         }
 
         // Process Favicon:
-        $favicon_zip_upload_root_folder = trim($params->get('favicon_zip_upload_folder'), '/');
-        #$favicon_zip_upload_root_folder = 'templates/npeu6/favicon';
-        $brand_favicon_folder = $favicon_zip_upload_root_folder . '/' . $svg_id . '/';
-        $dest_folder = $_SERVER['DOCUMENT_ROOT'] . '/' . $brand_favicon_folder;
-        
-        if (!file_exists($dest_folder)) {
-            mkdir($dest_folder);
 
-            // Set the folder to our preferred permissions:
-            if ($upload_folder_permissions) {
-                chmod($dest_folder, $upload_folder_permissions);
-            }
+        $favicon_filename = false;
+        if (!empty($files['favicon_zip']['name'])) {
+            $favicon_filename =  $files['favicon_zip']['name'];
+        }
 
-            // Set the folder to belong to our preferred group:
-            if ($upload_file_group) {
-                chgrp($dest_folder, $upload_file_group);
-            }
+        if ($favicon_filename || !empty($data['icon_svg'])) {
+            $favicon_zip_upload_root_folder = trim($params->get('favicon_zip_upload_folder'), '/');
+            #$favicon_zip_upload_root_folder = 'templates/npeu6/favicon';
+            $brand_favicon_folder = $favicon_zip_upload_root_folder . '/' . $svg_id . '/';
+            $dest_folder = $_SERVER['DOCUMENT_ROOT'] . '/' . $brand_favicon_folder;
 
-            // Set the folder to belong to our preferred owner:
-            if ($upload_file_owner) {
-                chown($dest_folder, $upload_file_owner);
+            if (!file_exists($dest_folder)) {
+                mkdir($dest_folder);
+
+                // Set the folder to our preferred permissions:
+                if ($upload_folder_permissions) {
+                    chmod($dest_folder, $upload_folder_permissions);
+                }
+
+                // Set the folder to belong to our preferred group:
+                if ($upload_file_group) {
+                    chgrp($dest_folder, $upload_file_group);
+                }
+
+                // Set the folder to belong to our preferred owner:
+                if ($upload_file_owner) {
+                    chown($dest_folder, $upload_file_owner);
+                }
             }
         }
 
-        $favicon_filename =  $files['favicon_zip']['name'];
 
         if(!empty($favicon_filename)) {
             $max = $this->return_bytes(ini_get('upload_max_filesize'));
@@ -615,7 +622,7 @@ class BrandsControllerBrand extends JControllerForm
 
                         $dest = $dest_folder . $data['alias'] . '_favicon.zip';
                         // So we have the data, is it different to what we had before or is there no zip file?
-                        
+
                         if (($data['icon_svg'] != $old_data->icon_svg) || !file_exists($dest)) {
                             // No, lets generate new favicons
                             $api_key = '8c99004e6cb170523db516982ba1d1c03f162ccc';
@@ -743,8 +750,8 @@ class BrandsControllerBrand extends JControllerForm
                             return false;
                         }
 
-                        $zip_src = $response_data->favicon_generation_result->favicon->package_url;                       
-                        
+                        $zip_src = $response_data->favicon_generation_result->favicon->package_url;
+
                         $opts = [
                             'http' => [
                                 'proxy'           => $proxy,
@@ -764,8 +771,8 @@ class BrandsControllerBrand extends JControllerForm
                             );
                             return false;
                         }
-                        
-                        
+
+
                         // Unzip to folder:
                         $zip = new ZipArchive;
                         if ($zip->open($dest) === true) {
