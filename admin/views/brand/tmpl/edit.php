@@ -75,7 +75,7 @@ $fieldsets = $this->form->getFieldsets();
                                     <?php if ($field->fieldname == 'logo_svg' && !empty($this->item->logo_svg_path)) : ?><br>
                                     <img src="<?php echo $this->item->logo_svg_path; ?>" alt="Logo: <?php echo $this->item->name; ?>" height="30" style="height: 30px; margin-bottom: 1em;" onerror="this.src='<?php echo $this->item->logo_png_path; ?>'; this.onerror=null;">
                                     <?php endif; ?>
-                                    <?php if ($field->fieldname == 'icon_svg' && !empty($this->item->logo_svg_path)) : ?><br>
+                                    <?php if ($field->fieldname == 'icon_svg' && !empty($this->item->icon_svg)) : ?><br>
                                     <img src="data:image/svg+xml;base64,<?php echo base64_encode($this->item->icon_svg); ?>" alt="Logo: <?php echo $this->item->name; ?>" height="60" style="height: 60px; margin-bottom: 1em;">
                                     <?php endif; ?>
                                     <?php if ($field->fieldname == 'favicon_zip' && !empty($this->item->favicon_zip_path)) : ?><br>
