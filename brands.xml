@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="utf-8"?>
-<extension type="component" version="3.2.0" method="upgrade">
+<extension type="component" method="upgrade">
 
     <name>COM_BRANDS</name>
     <author>Andy Kirk</author>
@@ -9,40 +9,41 @@
     <copyright>(C) NPEU 2019</copyright>
     <license>MIT License; see LICENSE.md</license>
 
-    <!--  The version string is recorded in the components table -->
     <version>2.12.0</version>
-    <!-- The description is optional and defaults to the name -->
     <description>COM_BRANDS_DESCRIPTION</description>
 
+    <namespace path="src">NPEU\Component\Brands</namespace>
+
     <updateservers>
-        <!-- Note: No spaces or linebreaks allowed between the server tags -->
-        <server type="extension" name="NPEU: com_brands Update Site">https://raw.githubusercontent.com/NPEU/com_brands/master/update-manifest.xml</server>
+        <server type="extension" name="NPEU: com_brands Update Site">https://raw.githubusercontent.com/NPEU/com_brands/main/update-manifest.xml</server>
     </updateservers>
 
-    <install> <!-- Runs on install -->
+    <install>
         <sql>
             <file driver="mysql" charset="utf8">sql/install.mysql.utf8.sql</file>
         </sql>
     </install>
-    <uninstall> <!-- Runs on uninstall -->
+    <uninstall>
         <sql>
             <file driver="mysql" charset="utf8">sql/uninstall.mysql.utf8.sql</file>
         </sql>
     </uninstall>
-    <update> <!-- Runs on update; New since J2.5 -->
+    <update>
         <schemas>
             <schemapath type="mysql">sql/updates/mysql</schemapath>
         </schemas>
     </update>
 
+    <files folder="site">
+        <folder>forms</folder>
+        <folder>language</folder>
+        <folder>src</folder>
+        <folder>tmpl</folder>
+    </files>
+
     <administration>
-        <!-- Administration Menu Section -->
         <menu>COM_BRANDS_MENU</menu>
         <submenu>
-            <!--
-                Note that all & must be escaped to &amp; for the file to be valid
-                XML and be parsed by the installer
-            -->
             <menu link="option=com_brands" view="records">
                 COM_BRANDS_MANAGER_SUBMENU_BRANDS
             </menu>
@@ -51,25 +52,15 @@
             </menu>
         </submenu>
 
-        <!-- Administration Main File Copy Section -->
-        <!-- Note the folder attribute: This attribute describes the folder
-                to copy FROM in the package to install therefore files copied
-                in this section are copied from /admin/ in the package -->
         <files folder="admin">
-            <!-- Admin Main File Copy Section -->
             <file>access.xml</file>
             <file>config.xml</file>
-            <file>controller.php</file>
-            <file>brands.php</file>
-            <file>index.html</file>
-            <folder>controllers</folder>
-            <folder>helpers</folder>
+            <folder>forms</folder>
             <folder>language</folder>
-            <folder>models</folder>
+            <folder>services</folder>
             <folder>sql</folder>
-            <folder>tables</folder>
-            <folder>vendor</folder>
-            <folder>views</folder>
+            <folder>src</folder>
+            <folder>tmpl</folder>
         </files>
     </administration>
 
