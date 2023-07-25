@@ -1,1 +1,0 @@
-ALTER TABLE #__brands ADD COLUMN logo_svg_with_fallback text CHARACTER SET utf8 COLLATE utf8_unicode_ci NOT NULL AFTER logo_svg;
