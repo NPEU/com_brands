@@ -310,6 +310,7 @@ class BrandController extends FormController
             } catch(Exception $e) {
                 $svg_is_valid = false;
             }
+        }echo 'here'; exit;
 
             restore_error_handler();
             ////

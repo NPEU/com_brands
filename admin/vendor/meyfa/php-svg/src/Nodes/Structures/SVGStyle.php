@@ -2,86 +2,52 @@
 
 namespace SVG\Nodes\Structures;
 
-use SVG\Nodes\SVGNode;
+use SVG\Nodes\CDataContainer;
+use SVG\Nodes\SVGNodeContainer;
 use SVG\Rasterization\SVGRasterizer;
 
 /**
  * Represents the SVG tag 'style'.
  * Has the attribute 'type' and the CSS content.
  */
-class SVGStyle extends SVGNode
+class SVGStyle extends SVGNodeContainer implements CDataContainer
 {
     const TAG_NAME = 'style';
 
-    private $css = '';
-
     /**
-     * @param string $css The CSS data rules.
-     * @param string $type The style type attribute.
+     * @param string $css   The CSS data rules.
+     * @param string $type  The style type attribute.
      */
-    public function __construct($css = '', $type = 'text/css')
+    public function __construct(string $css = '', string $type = 'text/css')
     {
         parent::__construct();
 
-        $this->css = $css;
-        $this->setAttribute('type', $type);
-    }
-
-    public static function constructFromAttributes($attr)
-    {
-        $cdata = trim(preg_replace('/^\s*\/\/<!\[CDATA\[([\s\S]*)\/\/\]\]>\s*\z/', '$1', $attr));
-
-        return new static($cdata);
+        $this->setValue($css);
+        $this->setType($type);
     }
 
     /**
-     * @return string The type attribute.
+     * @return string|null The type attribute.
      */
-    public function getType()
+    public function getType(): ?string
     {
         return $this->getAttribute('type');
     }
 
     /**
-     * @param $type string The type attribute.
+     * @param $type string|null The type attribute.
      *
      * @return $this This node instance, for call chaining.
      */
-    public function setType($type)
+    public function setType(?string $type): SVGStyle
     {
         return $this->setAttribute('type', $type);
     }
 
     /**
-     * @return string The CSS content.
+     * @inheritdoc
      */
-    public function getCss()
+    public function rasterize(SVGRasterizer $rasterizer): void
     {
-        return $this->css;
-    }
-
-    /**
-     * Sets the CSS content.
-     *
-     * @param $css string The new cdata content
-     *
-     * @return $this The node instance for call chaining
-     */
-    public function setCss($css)
-    {
-        $this->css = $css;
-
-        return $this;
-    }
-
-    /**
-     * @SuppressWarnings(PHPMD.UnusedFormalParameter)
-     *
-     * @param SVGRasterizer $rasterizer
-     */
-    public function rasterize(SVGRasterizer $rasterizer)
-    {
-        // Nothing to rasterize.
-        // All properties passed through container's global styles.
     }
 }

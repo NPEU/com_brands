@@ -2,42 +2,25 @@
 
 namespace SVG\Nodes\Shapes;
 
-use SVG\Nodes\SVGNode;
+use SVG\Nodes\SVGNodeContainer;
+use SVG\Shims\Str;
 
 /**
  * This is the base class for polygons and polylines.
  * Offers methods for manipulating the list of points.
  */
-abstract class SVGPolygonalShape extends SVGNode
+abstract class SVGPolygonalShape extends SVGNodeContainer
 {
-    /** @var array[] $points List of points (float 2-tuples). */
-    private $points;
-
     /**
      * @param array[] $points Array of points (float 2-tuples).
      */
-    public function __construct($points)
+    public function __construct(array $points = null)
     {
         parent::__construct();
 
-        $this->points = $points;
-    }
-
-    public static function constructFromAttributes($attrs)
-    {
-        $points = array();
-
-        if (isset($attrs['points'])) {
-            $coords = preg_split('/[\s,]+/', trim($attrs['points']));
-            for ($i = 0, $n = count($coords); $i < $n; $i += 2) {
-                $points[] = array(
-                    floatval($coords[$i]),
-                    floatval($coords[$i + 1]),
-                );
-            }
+        if (isset($points)) {
+            $this->setAttribute('points', self::joinPoints($points));
         }
-
-        return new static($points);
     }
 
     /**
@@ -49,13 +32,15 @@ abstract class SVGPolygonalShape extends SVGNode
      *
      * @return $this This node instance, for call chaining.
      */
-    public function addPoint($a, $b = null)
+    public function addPoint($a, $b = null): SVGPolygonalShape
     {
-        if (!is_array($a)) {
-            $a = array($a, $b);
+        if (is_array($a)) {
+            list($a, $b) = $a;
         }
 
-        $this->points[] = $a;
+        $pointsAttribute = $this->getAttribute('points') ?: '';
+        $this->setAttribute('points', Str::trim($pointsAttribute . ' ' . $a . ',' . $b));
+
         return $this;
     }
 
@@ -66,26 +51,38 @@ abstract class SVGPolygonalShape extends SVGNode
      *
      * @return $this This node instance, for call chaining.
      */
-    public function removePoint($index)
+    public function removePoint(int $index): SVGPolygonalShape
     {
-        array_splice($this->points, $index, 1);
+        $coords = self::splitCoordinates($this->getAttribute('points') ?: '');
+        array_splice($coords, $index * 2, 2);
+        $this->setAttribute('points', self::joinCoordinates($coords));
+
         return $this;
     }
 
     /**
      * @return int The number of points in this shape.
      */
-    public function countPoints()
+    public function countPoints(): int
     {
-        return count($this->points);
+        $pointsAttribute = $this->getAttribute('points');
+        if (isset($pointsAttribute)) {
+            $coords = self::splitCoordinates($pointsAttribute);
+            return (int) (count($coords) / 2);
+        }
+        return 0;
     }
 
     /**
      * @return array[] All points in this shape (array of float 2-tuples).
      */
-    public function getPoints()
+    public function getPoints(): array
     {
-        return $this->points;
+        $pointsAttribute = $this->getAttribute('points');
+        if (isset($pointsAttribute)) {
+            return self::splitPoints($pointsAttribute);
+        }
+        return [];
     }
 
     /**
@@ -93,9 +90,13 @@ abstract class SVGPolygonalShape extends SVGNode
      *
      * @return float[] The point at the given index (0 => x, 1 => y).
      */
-    public function getPoint($index)
+    public function getPoint(int $index): array
     {
-        return $this->points[$index];
+        $coords = self::splitCoordinates($this->getAttribute('points') ?: '');
+        return [
+            (float) $coords[$index * 2],
+            (float) $coords[$index * 2 + 1],
+        ];
     }
 
     /**
@@ -106,26 +107,59 @@ abstract class SVGPolygonalShape extends SVGNode
      *
      * @return $this This node instance, for call chaining.
      */
-    public function setPoint($index, $point)
+    public function setPoint(int $index, array $point): SVGPolygonalShape
     {
-        $this->points[$index] = $point;
+        $coords = self::splitCoordinates($this->getAttribute('points') ?: '');
+        $coords[$index * 2] = $point[0];
+        $coords[$index * 2 + 1] = $point[1];
+        $this->setAttribute('points', self::joinCoordinates($coords));
+
         return $this;
     }
 
-    public function getSerializableAttributes()
+    private static function splitCoordinates(?string $pointsString): array
     {
-        $attrs = parent::getSerializableAttributes();
+        return preg_split('/[\s,]+/', Str::trim($pointsString));
+    }
 
-        $points = '';
-        for ($i = 0, $n = count($this->points); $i < $n; ++$i) {
-            $point = $this->points[$i];
+    private static function joinCoordinates(array $coordinatesArray): string
+    {
+        $pointsString = '';
+        for ($i = 0, $n = count($coordinatesArray); $i < $n; ++$i) {
             if ($i > 0) {
-                $points .= ' ';
+                // join coordinates with ',' and points (2 coordinates) with ' '
+                $pointsString .= $i % 2 === 1 ? ',' : ' ';
             }
-            $points .= $point[0].','.$point[1];
+            $pointsString .= $coordinatesArray[$i];
         }
-        $attrs['points'] = $points;
+        return $pointsString;
+    }
 
-        return $attrs;
+    private static function splitPoints(?string $pointsString): array
+    {
+        $pointsArray = [];
+        $coords = self::splitCoordinates($pointsString);
+        for ($i = 0, $n = count($coords); $i + 1 < $n; $i += 2) {
+            $pointsArray[] = [
+                (float) $coords[$i],
+                (float) $coords[$i + 1],
+            ];
+        }
+        return $pointsArray;
+    }
+
+    private static function joinPoints(array $pointsArray): string
+    {
+        $pointsString = '';
+        foreach ($pointsArray as $point) {
+            if (count($point) < 2) {
+                break;
+            }
+            if ($pointsString !== '') {
+                $pointsString .= ' ';
+            }
+            $pointsString .= $point[0] . ',' . $point[1];
+        }
+        return $pointsString;
     }
 }

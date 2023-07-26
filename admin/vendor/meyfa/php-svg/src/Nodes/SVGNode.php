@@ -3,6 +3,7 @@
 namespace SVG\Nodes;
 
 use SVG\Rasterization\SVGRasterizer;
+use SVG\Shims\Str;
 
 /**
  * Represents a single element inside an SVG image (in other words, an XML tag).
@@ -12,42 +13,27 @@ abstract class SVGNode
 {
     /** @var SVGNodeContainer $parent The parent node. */
     protected $parent;
-    /** @var string[] $styles This node's set of explicit style declarations. */
-    protected $styles;
+    /** @var string[] $namespaces A map of custom namespaces to their URIs. */
+    private $namespaces;
     /** @var string[] $attributes This node's set of attributes. */
     protected $attributes;
+    /** @var string[] $styles This node's set of explicit style declarations. */
+    protected $styles;
     /** @var string $value This node's value */
     protected $value;
 
     public function __construct()
     {
-        $this->styles     = array();
-        $this->attributes = array();
+        $this->namespaces = [];
+        $this->attributes = [];
+        $this->styles     = [];
         $this->value      = '';
-    }
-
-    /**
-     * Factory function for this class, which accepts an associative array of
-     * strings instead of parameters in the correct order (like `__construct`).
-     *
-     * By default, simply invokes the constructor with no arguments. Subclasses
-     * may choose to override this if they require special behavior.
-     *
-     * @param string[] $attrs The attribute array (or array-like object; e.g. \SimpleXMLElement).
-     *
-     * @return static A new instance of the class this was called on.
-     *
-     * @SuppressWarnings("unused")
-     */
-    public static function constructFromAttributes($attrs)
-    {
-        return new static();
     }
 
     /**
      * @return string This node's tag name (e.g. 'rect' or 'g').
      */
-    public function getName()
+    public function getName(): string
     {
         return static::TAG_NAME;
     }
@@ -55,9 +41,19 @@ abstract class SVGNode
     /**
      * @return SVGNodeContainer|null This node's parent node, if not root.
      */
-    public function getParent()
+    public function getParent(): ?SVGNodeContainer
     {
         return $this->parent;
+    }
+
+    /**
+     * Set the namespaces defined directly on this node.
+     *
+     * @param string[] $namespaces A mapping from namespace id => URI.
+     */
+    public function setNamespaces(array $namespaces): void
+    {
+        $this->namespaces = $namespaces;
     }
 
     /**
@@ -65,19 +61,19 @@ abstract class SVGNode
      *
      * @return string The node's value
      */
-    public function getValue()
+    public function getValue(): string
     {
-        return isset($this->value) ? $this->value : '';
+        return $this->value ?? '';
     }
 
     /**
      * Defines the value on this node.
      *
-     * @param string $value The new node's value.
+     * @param string|null $value The new node's value.
      *
      * @return $this This node instance, for call chaining.
      */
-    public function setValue($value)
+    public function setValue(?string $value): SVGNode
     {
         if (!isset($value)) {
             unset($this->value);
@@ -88,29 +84,32 @@ abstract class SVGNode
     }
 
     /**
-     * Obtains the style with the given name as specified on this node.
+     * Obtains the style with the given name as specified on this node. The return value, if present, will never
+     * contain any leading or trailing whitespace.
      *
      * @param string $name The name of the style to get.
      *
      * @return string|null The style value if specified on this node, else null.
      */
-    public function getStyle($name)
+    public function getStyle(string $name): ?string
     {
-        return isset($this->styles[$name]) ? $this->styles[$name] : null;
+        // Note: whitespace has been trimmed in the setter
+        return $this->styles[$name] ?? null;
     }
 
     /**
-     * Defines a style on this node. A value of null or the empty string will
-     * unset the property.
+     * Defines a style on this node. A value of null, the empty string, or strings containing only whitespace will
+     * unset the property. Since whitespace surrounding style values is meaningless, it will be trimmed such that later
+     * retrieval of the style property or computed style property will yield the value with no surrounding whitespace.
      *
-     * @param string      $name  The name of the style to set.
-     * @param string|null $value The new style value.
+     * @param string     $name  The name of the style to set.
+     * @param mixed|null $value The new style value.
      *
      * @return $this This node instance, for call chaining.
      */
-    public function setStyle($name, $value)
+    public function setStyle(string $name, $value): SVGNode
     {
-        $value = (string) $value;
+        $value = Str::trim((string) $value);
         if (strlen($value) === 0) {
             unset($this->styles[$name]);
             return $this;
@@ -126,28 +125,30 @@ abstract class SVGNode
      *
      * @return $this This node instance, for call chaining.
      */
-    public function removeStyle($name)
+    public function removeStyle(string $name): SVGNode
     {
         unset($this->styles[$name]);
         return $this;
     }
 
     /**
-     * Obtains the computed style with the given name. The 'computed style' is
-     * the one in effect; taking inheritance and default styles into account.
+     * Obtains the computed style with the given name. The 'computed style' is the one in effect; taking inheritance
+     * and default styles into account.
+     *
+     * The return value, if present, will never contain any leading or trailing whitespace.
      *
      * @param string $name The name of the style to compute.
      *
      * @return string|null The style value if specified anywhere, else null.
      */
-    public function getComputedStyle($name)
+    public function getComputedStyle(string $name): ?string
     {
         $style = $this->getStyle($name);
 
         // If no immediate style then get style from container/global style rules
         if ($style === null && isset($this->parent)) {
             $containerStyles = $this->parent->getContainerStyleForNode($this);
-            $style = isset($containerStyles[$name]) ? $containerStyles[$name] : null;
+            $style = $containerStyles[$name] ?? null;
         }
 
         // If still no style then get parent's style
@@ -168,21 +169,21 @@ abstract class SVGNode
      *
      * @return string|null The attribute's value, or null.
      */
-    public function getAttribute($name)
+    public function getAttribute(string $name): ?string
     {
-        return isset($this->attributes[$name]) ? $this->attributes[$name] : null;
+        return $this->attributes[$name] ?? null;
     }
 
     /**
      * Defines an attribute on this node. A value of null will unset the
      * attribute. Note that the empty string is perfectly valid.
      *
-     * @param string      $name  The name of the attribute to set.
-     * @param string|null $value The new attribute value.
+     * @param string     $name  The name of the attribute to set.
+     * @param mixed|null $value The new attribute value.
      *
      * @return $this This node instance, for call chaining.
      */
-    public function setAttribute($name, $value)
+    public function setAttribute(string $name, $value): SVGNode
     {
         if (!isset($value)) {
             unset($this->attributes[$name]);
@@ -199,7 +200,7 @@ abstract class SVGNode
      *
      * @return $this This node instance, for call chaining.
      */
-    public function removeAttribute($name)
+    public function removeAttribute(string $name): SVGNode
     {
         unset($this->attributes[$name]);
         return $this;
@@ -211,9 +212,9 @@ abstract class SVGNode
      * Subclasses MUST override this and include their own properties, if they
      * don't already use SVGNode's attribute set for storing them.
      *
-     * @return string[] The set of attributes to include in generated XML.
+     * @return string[] The attribute mapping to include in generated XML.
      */
-    public function getSerializableAttributes()
+    public function getSerializableAttributes(): array
     {
         return $this->attributes;
     }
@@ -224,11 +225,21 @@ abstract class SVGNode
      * Subclasses MAY override this to augment or limit the styles returned
      * (in the case of SVG default values, for example).
      *
-     * @return string[] The set of styles to include in generated XML.
+     * @return string[] The style mapping to include in generated XML.
      */
-    public function getSerializableStyles()
+    public function getSerializableStyles(): array
     {
         return $this->styles;
+    }
+
+    /**
+     * Constructs a set of namespaces that shall be included in generated XML.
+     *
+     * @return string[] The namespace mapping to include in generated XML.
+     */
+    public function getSerializableNamespaces(): array
+    {
+        return $this->namespaces;
     }
 
     /**
@@ -237,23 +248,23 @@ abstract class SVGNode
      *
      * @return string|null The generated pattern.
      */
-    public function getIdAndClassPattern()
+    public function getIdAndClassPattern(): ?string
     {
-        $id = $this->getAttribute('id');
-        $class = $this->getAttribute('class');
+        $id = $this->getAttribute('id') != null ? Str::trim($this->getAttribute('id')) : '';
+        $class = $this->getAttribute('class') != null  ? Str::trim($this->getAttribute('class')) : '';
 
         $pattern = '';
-        if (!empty($id)) {
-            $pattern = '#'.$id.'|#'.$id;
+        if ($id !== '') {
+            $pattern = '#' . $id . '|#' . $id;
         }
-        if (!empty($class)) {
-            if (!empty($pattern)) {
-                $pattern .= '.'.$class.'|';
+        if ($class !== '') {
+            if ($pattern !== '') {
+                $pattern .= '.' . $class . '|';
             }
-            $pattern .= '.'.$class;
+            $pattern .= '.' . $class;
         }
 
-        return empty($pattern) ? null : '/('.$pattern.')/';
+        return $pattern === '' ? null : '/(' . $pattern . ')/';
     }
 
     /**
@@ -262,13 +273,12 @@ abstract class SVGNode
      *
      * @return float[]|null The viewbox array.
      */
-    public function getViewBox()
+    public function getViewBox(): ?array
     {
-        $attr = $this->getAttribute('viewBox');
-        if (empty($attr)) {
+        if ($this->getAttribute('viewBox') == null) {
             return null;
         }
-
+        $attr = Str::trim($this->getAttribute('viewBox'));
         $result = preg_split('/[\s,]+/', $attr);
         if (count($result) !== 4) {
             return null;
@@ -284,7 +294,7 @@ abstract class SVGNode
      *
      * @return void
      */
-    abstract public function rasterize(SVGRasterizer $rasterizer);
+    abstract public function rasterize(SVGRasterizer $rasterizer): void;
 
     /**
      * Returns all descendants of this node (excluding this node) having the
@@ -300,7 +310,7 @@ abstract class SVGNode
      *
      * @SuppressWarnings("unused")
      */
-    public function getElementsByTagName($tagName, array &$result = array())
+    public function getElementsByTagName(string $tagName, array &$result = []): array
     {
         return $result;
     }
@@ -314,7 +324,7 @@ abstract class SVGNode
      * (e.g. class="foo", class="a b foo bar", etc)
      *
      * Example 2: getElementsByClassName('foo bar')
-     * or alternatively: getElementsByClassName(array('foo', 'bar'))
+     * or alternatively: getElementsByClassName(['foo', 'bar'])
      * would return all nodes whose class attribute contains both items
      * 'foo' and 'bar'
      * (e.g. class="a b foo qux bar", but not class="foo")
@@ -326,7 +336,7 @@ abstract class SVGNode
      *
      * @SuppressWarnings("unused")
      */
-    public function getElementsByClassName($className, array &$result = array())
+    public function getElementsByClassName($className, array &$result = []): array
     {
         return $result;
     }

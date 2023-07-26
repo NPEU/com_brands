@@ -2,21 +2,23 @@
 
 namespace SVG\Nodes\Shapes;
 
-use SVG\Nodes\SVGNode;
+use SVG\Nodes\SVGNodeContainer;
 use SVG\Rasterization\SVGRasterizer;
+use SVG\Rasterization\Transform\TransformParser;
+use SVG\Utilities\Units\Length;
 
 /**
  * Represents the SVG tag 'circle'.
  * Has the special attributes cx, cy, r.
  */
-class SVGCircle extends SVGNode
+class SVGCircle extends SVGNodeContainer
 {
     const TAG_NAME = 'circle';
 
     /**
-     * @param string|null $cx The center's x coordinate.
-     * @param string|null $cy The center's y coordinate.
-     * @param string|null $r  The radius.
+     * @param mixed $cx The center's x coordinate.
+     * @param mixed $cy The center's y coordinate.
+     * @param mixed $r  The radius.
      */
     public function __construct($cx = null, $cy = null, $r = null)
     {
@@ -28,9 +30,9 @@ class SVGCircle extends SVGNode
     }
 
     /**
-     * @return string The center's x coordinate.
+     * @return string|null The center's x coordinate.
      */
-    public function getCenterX()
+    public function getCenterX(): ?string
     {
         return $this->getAttribute('cx');
     }
@@ -38,19 +40,19 @@ class SVGCircle extends SVGNode
     /**
      * Sets the center's x coordinate.
      *
-     * @param string $cx The new coordinate.
+     * @param mixed $cx The new coordinate.
      *
      * @return $this This node instance, for call chaining.
      */
-    public function setCenterX($cx)
+    public function setCenterX($cx): SVGCircle
     {
         return $this->setAttribute('cx', $cx);
     }
 
     /**
-     * @return string The center's y coordinate.
+     * @return string|null The center's y coordinate.
      */
-    public function getCenterY()
+    public function getCenterY(): ?string
     {
         return $this->getAttribute('cy');
     }
@@ -58,19 +60,19 @@ class SVGCircle extends SVGNode
     /**
      * Sets the center's y coordinate.
      *
-     * @param string $cy The new coordinate.
+     * @param mixed $cy The new coordinate.
      *
      * @return $this This node instance, for call chaining.
      */
-    public function setCenterY($cy)
+    public function setCenterY($cy): SVGCircle
     {
         return $this->setAttribute('cy', $cy);
     }
 
     /**
-     * @return string The radius.
+     * @return string|null The radius.
      */
-    public function getRadius()
+    public function getRadius(): ?string
     {
         return $this->getAttribute('r');
     }
@@ -78,16 +80,19 @@ class SVGCircle extends SVGNode
     /**
      * Sets the radius.
      *
-     * @param string $r The new radius.
+     * @param mixed $r The new radius.
      *
      * @return $this This node instance, for call chaining.
      */
-    public function setRadius($r)
+    public function setRadius($r): SVGCircle
     {
         return $this->setAttribute('r', $r);
     }
 
-    public function rasterize(SVGRasterizer $rasterizer)
+    /**
+     * @inheritdoc
+     */
+    public function rasterize(SVGRasterizer $rasterizer): void
     {
         if ($this->getComputedStyle('display') === 'none') {
             return;
@@ -98,12 +103,19 @@ class SVGCircle extends SVGNode
             return;
         }
 
-        $r = $this->getRadius();
-        $rasterizer->render('ellipse', array(
-            'cx'    => $this->getCenterX(),
-            'cy'    => $this->getCenterY(),
+        TransformParser::parseTransformString($this->getAttribute('transform'), $rasterizer->pushTransform());
+
+        // https://svgwg.org/svg2-draft/geometry.html#R
+        // Percentages: refer to the normalized diagonal of the current SVG viewport
+        $r = Length::convert($this->getRadius(), $rasterizer->getNormalizedDiagonal());
+
+        $rasterizer->render('ellipse', [
+            'cx'    => Length::convert($this->getCenterX(), $rasterizer->getDocumentWidth()),
+            'cy'    => Length::convert($this->getCenterY(), $rasterizer->getDocumentHeight()),
             'rx'    => $r,
             'ry'    => $r,
-        ), $this);
+        ], $this);
+
+        $rasterizer->popTransform();
     }
 }

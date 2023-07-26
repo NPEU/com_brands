@@ -3,6 +3,7 @@
 namespace SVG\Nodes\Shapes;
 
 use SVG\Rasterization\SVGRasterizer;
+use SVG\Rasterization\Transform\TransformParser;
 
 /**
  * Represents the SVG tag 'polyline'.
@@ -15,12 +16,15 @@ class SVGPolyline extends SVGPolygonalShape
     /**
      * @param array[] $points Array of points (float 2-tuples).
      */
-    public function __construct($points = array())
+    public function __construct($points = [])
     {
         parent::__construct($points);
     }
 
-    public function rasterize(SVGRasterizer $rasterizer)
+    /**
+     * @inheritdoc
+     */
+    public function rasterize(SVGRasterizer $rasterizer): void
     {
         if ($this->getComputedStyle('display') === 'none') {
             return;
@@ -31,9 +35,14 @@ class SVGPolyline extends SVGPolygonalShape
             return;
         }
 
-        $rasterizer->render('polygon', array(
+        TransformParser::parseTransformString($this->getAttribute('transform'), $rasterizer->pushTransform());
+
+        $rasterizer->render('polygon', [
             'open'      => true,
             'points'    => $this->getPoints(),
-        ), $this);
+            'fill-rule' => strtolower($this->getComputedStyle('fill-rule') ?: 'nonzero')
+        ], $this);
+
+        $rasterizer->popTransform();
     }
 }

@@ -12,7 +12,7 @@ class SVGClipPath extends SVGNodeContainer
 {
     const TAG_NAME = 'clipPath';
 
-    public function __construct($id)
+    public function __construct(string $id = null)
     {
         parent::__construct();
 
@@ -20,11 +20,9 @@ class SVGClipPath extends SVGNodeContainer
     }
 
     /**
-     * @SuppressWarnings(PHPMD.UnusedFormalParameter)
-     *
-     * @param SVGRasterizer $rasterizer
+     * @inheritdoc
      */
-    public function rasterize(SVGRasterizer $rasterizer)
+    public function rasterize(SVGRasterizer $rasterizer): void
     {
         // TODO How do we rasterize this? The clipPath in and of itself wont get rasterized, but usages of it will be!
     }

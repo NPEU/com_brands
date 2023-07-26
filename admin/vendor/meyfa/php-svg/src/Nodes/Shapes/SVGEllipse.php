@@ -2,22 +2,24 @@
 
 namespace SVG\Nodes\Shapes;
 
-use SVG\Nodes\SVGNode;
+use SVG\Nodes\SVGNodeContainer;
 use SVG\Rasterization\SVGRasterizer;
+use SVG\Rasterization\Transform\TransformParser;
+use SVG\Utilities\Units\Length;
 
 /**
  * Represents the SVG tag 'ellipse'.
  * Has the special attributes cx, cy, rx, ry.
  */
-class SVGEllipse extends SVGNode
+class SVGEllipse extends SVGNodeContainer
 {
     const TAG_NAME = 'ellipse';
 
     /**
-     * @param string|null $cx The center's x coordinate.
-     * @param string|null $cy The center's y coordinate.
-     * @param string|null $rx The radius along the x-axis.
-     * @param string|null $ry The radius along the y-axis.
+     * @param mixed $cx The center's x coordinate.
+     * @param mixed $cy The center's y coordinate.
+     * @param mixed $rx The radius along the x-axis.
+     * @param mixed $ry The radius along the y-axis.
      */
     public function __construct($cx = null, $cy = null, $rx = null, $ry = null)
     {
@@ -30,9 +32,9 @@ class SVGEllipse extends SVGNode
     }
 
     /**
-     * @return string The center's x coordinate.
+     * @return string|null The center's x coordinate.
      */
-    public function getCenterX()
+    public function getCenterX(): ?string
     {
         return $this->getAttribute('cx');
     }
@@ -40,19 +42,19 @@ class SVGEllipse extends SVGNode
     /**
      * Sets the center's x coordinate.
      *
-     * @param string $cx The new coordinate.
+     * @param mixed $cx The new coordinate.
      *
      * @return $this This node instance, for call chaining.
      */
-    public function setCenterX($cx)
+    public function setCenterX($cx): SVGEllipse
     {
         return $this->setAttribute('cx', $cx);
     }
 
     /**
-     * @return string The center's y coordinate.
+     * @return string|null The center's y coordinate.
      */
-    public function getCenterY()
+    public function getCenterY(): ?string
     {
         return $this->getAttribute('cy');
     }
@@ -60,19 +62,19 @@ class SVGEllipse extends SVGNode
     /**
      * Sets the center's y coordinate.
      *
-     * @param string $cy The new coordinate.
+     * @param mixed $cy The new coordinate.
      *
      * @return $this This node instance, for call chaining.
      */
-    public function setCenterY($cy)
+    public function setCenterY($cy): SVGEllipse
     {
         return $this->setAttribute('cy', $cy);
     }
 
     /**
-     * @return string The radius along the x-axis.
+     * @return string|null The radius along the x-axis.
      */
-    public function getRadiusX()
+    public function getRadiusX(): ?string
     {
         return $this->getAttribute('rx');
     }
@@ -80,19 +82,19 @@ class SVGEllipse extends SVGNode
     /**
      * Sets the radius along the x-axis.
      *
-     * @param string $rx The new radius.
+     * @param mixed $rx The new radius.
      *
      * @return $this This node instance, for call chaining.
      */
-    public function setRadiusX($rx)
+    public function setRadiusX($rx): SVGEllipse
     {
         return $this->setAttribute('rx', $rx);
     }
 
     /**
-     * @return string The radius along the y-axis.
+     * @return string|null The radius along the y-axis.
      */
-    public function getRadiusY()
+    public function getRadiusY(): ?string
     {
         return $this->getAttribute('ry');
     }
@@ -100,16 +102,19 @@ class SVGEllipse extends SVGNode
     /**
      * Sets the radius along the y-axis.
      *
-     * @param string $ry The new radius.
+     * @param mixed $ry The new radius.
      *
      * @return $this This node instance, for call chaining.
      */
-    public function setRadiusY($ry)
+    public function setRadiusY($ry): SVGEllipse
     {
         return $this->setAttribute('ry', $ry);
     }
 
-    public function rasterize(SVGRasterizer $rasterizer)
+    /**
+     * @inheritdoc
+     */
+    public function rasterize(SVGRasterizer $rasterizer): void
     {
         if ($this->getComputedStyle('display') === 'none') {
             return;
@@ -120,11 +125,15 @@ class SVGEllipse extends SVGNode
             return;
         }
 
-        $rasterizer->render('ellipse', array(
-            'cx'    => $this->getCenterX(),
-            'cy'    => $this->getCenterY(),
-            'rx'    => $this->getRadiusX(),
-            'ry'    => $this->getRadiusY(),
-        ), $this);
+        TransformParser::parseTransformString($this->getAttribute('transform'), $rasterizer->pushTransform());
+
+        $rasterizer->render('ellipse', [
+            'cx'    => Length::convert($this->getCenterX(), $rasterizer->getDocumentWidth()),
+            'cy'    => Length::convert($this->getCenterY(), $rasterizer->getDocumentHeight()),
+            'rx'    => Length::convert($this->getRadiusX(), $rasterizer->getDocumentWidth()),
+            'ry'    => Length::convert($this->getRadiusY(), $rasterizer->getDocumentHeight()),
+        ], $this);
+
+        $rasterizer->popTransform();
     }
 }

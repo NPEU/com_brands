@@ -2,6 +2,7 @@
 
 namespace SVG;
 
+use SVG\Fonts\FontRegistry;
 use SVG\Nodes\Structures\SVGDocumentFragment;
 use SVG\Rasterization\SVGRasterizer;
 use SVG\Reading\SVGReader;
@@ -16,23 +17,24 @@ class SVG
     /** @var SVGReader $reader The singleton reader used by this class. */
     private static $reader;
 
+    private static $fontRegistry;
+
     /** @var SVGDocumentFragment $document This image's root `svg` node/tag. */
     private $document;
 
     /**
-     * @param string   $width      The image's width (any CSS length).
-     * @param string   $height     The image's height (any CSS length).
-     * @param string[] $namespaces An optional array of additional namespaces.
+     * @param mixed $width    The image's width (any CSS length).
+     * @param mixed $height   The image's height (any CSS length).
      */
-    public function __construct($width, $height, array $namespaces = array())
+    public function __construct($width = null, $height = null)
     {
-        $this->document = new SVGDocumentFragment($width, $height, $namespaces);
+        $this->document = new SVGDocumentFragment($width, $height);
     }
 
     /**
      * @return SVGDocumentFragment The document/root node of this image.
      */
-    public function getDocument()
+    public function getDocument(): SVGDocumentFragment
     {
         return $this->document;
     }
@@ -45,18 +47,20 @@ class SVG
      * Note that, since images in SVG have an innate size, the given size only
      * scales the output canvas and does not influence element positions.
      *
-     * @param int $width  The target canvas's width, in pixels.
-     * @param int $height The target canvas's height, in pixels.
+     * @param int $width              The target canvas's width, in pixels.
+     * @param int $height             The target canvas's height, in pixels.
+     * @param string|null $background The background color (hex/rgb[a]/hsl[a]/...).
      *
      * @return resource The rasterized image as a GD resource (with alpha).
      */
-    public function toRasterImage($width, $height)
+    public function toRasterImage(int $width, int $height, ?string $background = null)
     {
         $docWidth  = $this->document->getWidth();
         $docHeight = $this->document->getHeight();
         $viewBox = $this->document->getViewBox();
 
-        $rasterizer = new SVGRasterizer($docWidth, $docHeight, $viewBox, $width, $height);
+        $rasterizer = new SVGRasterizer($docWidth, $docHeight, $viewBox, $width, $height, $background);
+        $rasterizer->setFontRegistry(self::getFontRegistry());
         $this->document->rasterize($rasterizer);
 
         return $rasterizer->finish();
@@ -65,7 +69,7 @@ class SVG
     /**
      * @see SVG::toXMLString() For the implementation (this is a wrapper).
      */
-    public function __toString()
+    public function __toString(): string
     {
         return $this->toXMLString();
     }
@@ -81,7 +85,7 @@ class SVG
      *
      * @return string This image's document tree as an XML string.
      */
-    public function toXMLString($standalone = true)
+    public function toXMLString(bool $standalone = true): string
     {
         $writer = new SVGWriter($standalone);
         $writer->writeNode($this->document);
@@ -96,7 +100,7 @@ class SVG
      *
      * @return SVG A new image, with the nodes parsed from the XML.
      */
-    public static function fromString($string)
+    public static function fromString($string): ?SVG
     {
         return self::getReader()->parseString($string);
     }
@@ -109,7 +113,7 @@ class SVG
      *
      * @return SVG A new image, with the nodes parsed from the XML.
      */
-    public static function fromFile($file)
+    public static function fromFile(string $file): ?SVG
     {
         return self::getReader()->parseFile($file);
     }
@@ -117,11 +121,33 @@ class SVG
     /**
      * @return SVGReader The singleton reader shared across all instances.
      */
-    private static function getReader()
+    private static function getReader(): SVGReader
     {
         if (!isset(self::$reader)) {
             self::$reader = new SVGReader();
         }
         return self::$reader;
+    }
+
+    /**
+     * @return FontRegistry The singleton font registry.
+     */
+    private static function getFontRegistry(): FontRegistry
+    {
+        if (!isset(self::$fontRegistry)) {
+            self::$fontRegistry = new FontRegistry();
+        }
+        return self::$fontRegistry;
+    }
+
+    /**
+     * Register a font file to be used when rasterizing text.
+     *
+     * @param string $path The path to the font file.
+     * @return void
+     */
+    public static function addFont(string $path): void
+    {
+        self::getFontRegistry()->addFont($path);
     }
 }

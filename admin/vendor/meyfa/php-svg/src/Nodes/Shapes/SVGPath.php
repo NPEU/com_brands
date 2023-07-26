@@ -2,20 +2,24 @@
 
 namespace SVG\Nodes\Shapes;
 
-use SVG\Nodes\SVGNode;
+use SVG\Nodes\SVGNodeContainer;
+use SVG\Rasterization\Path\PathParser;
 use SVG\Rasterization\SVGRasterizer;
+use SVG\Rasterization\Transform\TransformParser;
 
 /**
  * Represents the SVG tag 'path'.
  */
-class SVGPath extends SVGNode
+class SVGPath extends SVGNodeContainer
 {
     const TAG_NAME = 'path';
+
+    private static $pathParser;
 
     /**
      * @param string|null $d The path description.
      */
-    public function __construct($d = null)
+    public function __construct(string $d = null)
     {
         parent::__construct();
 
@@ -23,9 +27,9 @@ class SVGPath extends SVGNode
     }
 
     /**
-     * @return string The path description string.
+     * @return string|null The path description string.
      */
-    public function getDescription()
+    public function getDescription(): ?string
     {
         return $this->getAttribute('d');
     }
@@ -33,16 +37,19 @@ class SVGPath extends SVGNode
     /**
      * Sets the path description string.
      *
-     * @param string $d The new description.
+     * @param string|null $d The new description.
      *
      * @return $this This node instance, for call chaining.
      */
-    public function setDescription($d)
+    public function setDescription(?string $d): SVGPath
     {
         return $this->setAttribute('d', $d);
     }
 
-    public function rasterize(SVGRasterizer $rasterizer)
+    /**
+     * @inheritdoc
+     */
+    public function rasterize(SVGRasterizer $rasterizer): void
     {
         if ($this->getComputedStyle('display') === 'none') {
             return;
@@ -58,14 +65,23 @@ class SVGPath extends SVGNode
             return;
         }
 
-        $commands = $rasterizer->getPathParser()->parse($d);
-        $subpaths = $rasterizer->getPathApproximator()->approximate($commands);
+        $commands = self::getPathParser()->parse($d);
 
-        foreach ($subpaths as $subpath) {
-            $rasterizer->render('polygon', array(
-                'open'      => true,
-                'points'    => $subpath,
-            ), $this);
+        TransformParser::parseTransformString($this->getAttribute('transform'), $rasterizer->pushTransform());
+
+        $rasterizer->render('path', [
+            'commands'  => $commands,
+            'fill-rule' => strtolower($this->getComputedStyle('fill-rule') ?: 'nonzero')
+        ], $this);
+
+        $rasterizer->popTransform();
+    }
+
+    private static function getPathParser(): PathParser
+    {
+        if (!isset(self::$pathParser)) {
+            self::$pathParser = new PathParser();
         }
+        return self::$pathParser;
     }
 }

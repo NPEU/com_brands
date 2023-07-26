@@ -104,7 +104,9 @@ class HtmlView extends BaseHtmlView {
         //HtmlHelper::_('behavior.formvalidator');
 
         $isNew = ($this->item->id < 1);
-        $this->document->setTitle($isNew ? Text::_('COM_BRANDS_BRAND_CREATING') :
-                Text::_('COM_BRANDS_BRAND_EDITING'));
+        $this->document->setTitle($isNew
+          ? Text::_('COM_BRANDS_RECORD_CREATING')
+          : Text::_('COM_BRANDS_RECORD_EDITING')
+        );
     }
 }
