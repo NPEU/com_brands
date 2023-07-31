@@ -1,18 +1,64 @@
 <?xml version="1.0" encoding="utf-8"?>
 <config>
     <fieldset
-        name="brands"
+        name="options"
         label="COM_BRANDS_CONFIG_RECORDS_SETTINGS_LABEL"
-        description="COM_BRANDS_CONFIG_RECORDS_SETTINGS_DESC"
     >
         <field
-            name="email_admins"
-            type="textarea"
-            label="COM_BRANDS_CONFIG_EMAIL_ADMINS_LABEL"
-            description="COM_BRANDS_CONFIG_EMAIL_ADMINS_DESC"
-            cols="50"
-            rows="10"
-            filter="string"
+            name="logo_folder"
+            type="text"
+            label="COM_BRANDS_CONFIG_LOGO_FOLDER_LABEL"
+            description="COM_BRANDS_CONFIG_LOGO_FOLDER_DESC"
+            default=""
+        />
+        <field
+            name="logo_file_suffix"
+            type="text"
+            label="COM_BRANDS_CONFIG_LOGO_FILE_SUFFIX_LABEL"
+            description="COM_BRANDS_CONFIG_LOGO_FILE_SUFFIX_DESC"
+            default=""
+        />
+        <field
+            name="logo_image_height"
+            type="int"
+            label="COM_BRANDS_CONFIG_LOGO_IMAGE_HEIGHT_LABEL"
+            description="COM_BRANDS_CONFIG_LOGO_IMAGE_HEIGHT_DESC"
+            default=""
+        />
+        <field
+            name="favicon_zip_upload_folder"
+            type="text"
+            label="COM_BRANDS_CONFIG_FAVICON_ZIP_FOLDER_LABEL"
+            description="COM_BRANDS_CONFIG_FAVICON_ZIP_FOLDER_DESC"
+            default=""
+        />
+         <field
+            name="upload_folder_permissions"
+            type="number"
+            label="COM_BRANDS_CONFIG_FOLDERPERMS_LABEL"
+            description="COM_BRANDS_CONFIG_FOLDERERMS_DESC"
+            default="0771"
+        />
+        <field
+            name="upload_file_permissions"
+            type="number"
+            label="COM_BRANDS_CONFIG_FILEPERMS_LABEL"
+            description="COM_BRANDS_CONFIG_FILEPERMS_DESC"
+            default="0660"
+        />
+        <field
+            name="upload_file_group"
+            type="text"
+            label="COM_BRANDS_CONFIG_FILEGRP_LABEL"
+            description="COM_BRANDS_CONFIG_FILEGRP_DESC"
+            default=""
+        />
+        <field
+            name="upload_file_owner"
+            type="text"
+            label="COM_BRANDS_CONFIG_FILEOWN_LABEL"
+            description="COM_BRANDS_CONFIG_FILEOWN_DESC"
+            default=""
         />
     </fieldset>
 
