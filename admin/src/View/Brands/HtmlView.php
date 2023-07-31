@@ -87,7 +87,7 @@ class HtmlView extends BaseHtmlView {
         $this->canDo = ContentHelper::getActions('com_brands');
 
         $errors = $this->get('Errors');
-        if (count($errors = $this->get('Errors'))) {
+        if (is_array($errors) && count($errors)) {
             throw new GenericDataException(implode("\n", $errors), 500);
         }
 
@@ -176,7 +176,7 @@ class HtmlView extends BaseHtmlView {
 
         if ($this->canDo->get('core.admin')) {
             ToolBarHelper::divider();
-            ToolBarHelper::preferences('com_brand');
+            ToolBarHelper::preferences('com_brands');
         }
     }
 

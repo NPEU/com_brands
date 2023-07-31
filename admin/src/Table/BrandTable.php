@@ -50,8 +50,8 @@ class BrandTable extends Table
 
         parent::__construct('#__brands', 'id', $db);
 
-        // In functions such as generateTitle() Joomla looks for the 'title' field ...
-        #$this->setColumnAlias('title', 'greeting');
+        // In functions such as generateTitle() Joomla looks for the 'name' field ...
+        #$this->setColumnAlias('name', 'greeting');
     }
 
     public function bind($array, $ignore = '') {
@@ -100,13 +100,13 @@ class BrandTable extends Table
         return 'com_brands.brand.'.(int) $this->$k;
     }
     /**
-     * Method to return the title to use for the asset table.
+     * Method to return the name to use for the asset table.
      *
      * @return    string
      * @since    2.5
      */
     protected function _getAssetTitle() {
-        return $this->title;
+        return $this->name;
     }
 
     public function check() {

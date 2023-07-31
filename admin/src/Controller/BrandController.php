@@ -293,6 +293,10 @@ class BrandController extends FormController
             return false;
         }
 
+        // Set some defaults 0 J4 throws model error otherwise and adding empty defaults to the form
+        // doesn't seem to help:
+        $data['favicon_zip_path'] = '';
+
         // Process SVG:
         if(!empty($data['logo_svg'])) {
             $svg = $data['logo_svg'];
@@ -310,7 +314,6 @@ class BrandController extends FormController
             } catch(Exception $e) {
                 $svg_is_valid = false;
             }
-        }echo 'here'; exit;
 
             restore_error_handler();
             ////

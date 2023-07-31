@@ -152,11 +152,11 @@ class BrandModel extends AdminModel
         $date = Factory::getDate();
         $user = Factory::getApplication()->getIdentity();
 
-        $table->title = htmlspecialchars_decode($table->title, ENT_QUOTES);
+        $table->name = htmlspecialchars_decode($table->name, ENT_QUOTES);
         $table->alias = ApplicationHelper::stringURLSafe($table->alias);
 
         if (empty($table->alias)) {
-            $table->alias = ApplicationHelper::stringURLSafe($table->title);
+            $table->alias = ApplicationHelper::stringURLSafe($table->name);
         }
 
         $table->modified    = $date->toSql();
@@ -224,12 +224,12 @@ class BrandModel extends AdminModel
             }
         }*/
 
-        // Alter the title for save as copy
+        // Alter the name for save as copy
         if ($app->input->get('task') == 'save2copy') {
-            list($title, $alias) = $this->generateNewTitle(false, $data['alias'], $data['title']);
-            $data['title']    = $title;
-            $data['alias']    = $alias;
-            $data['state']    = 0;
+            list($name, $alias) = $this->generateNewTitle(false, $data['alias'], $data['name']);
+            $data['name']    = $name;
+            $data['alias']   = $alias;
+            $data['state']   = 0;
         }
 
         // Automatic handling of alias for empty fields
@@ -237,9 +237,9 @@ class BrandModel extends AdminModel
         if (in_array($input->get('task'), array('apply', 'save', 'save2new'))) {
             if (empty($data['alias'])) {
                 if (Factory::getConfig()->get('unicodeslugs') == 1) {
-                    $data['alias'] = \Joomla\CMS\Filter\OutputFilter::stringURLUnicodeSlug($data['title']);
+                    $data['alias'] = \Joomla\CMS\Filter\OutputFilter::stringURLUnicodeSlug($data['name']);
                 } else {
-                    $data['alias'] = \Joomla\CMS\Filter\OutputFilter::stringURLSafe($data['title']);
+                    $data['alias'] = \Joomla\CMS\Filter\OutputFilter::stringURLSafe($data['name']);
                 }
 
                 $table = $this->getMVCFactory()->createTable('Brand', 'Administrator');
@@ -248,7 +248,7 @@ class BrandModel extends AdminModel
                     $msg = \Joomla\CMSanguage\Text::_('COM_CONTENT_SAVE_WARNING');
                 }
 
-                list($title, $alias) = $this->generateNewTitle(false, $data['alias'], $data['title']);
+                list($name, $alias) = $this->generateNewTitle(false, $data['alias'], $data['name']);
                 $data['alias'] = $alias;
 
                 if (isset($msg)) {
@@ -261,21 +261,21 @@ class BrandModel extends AdminModel
     }
 
     /**
-     * Method to change the title & alias.
+     * Method to change the name & alias.
      *
      * @param   integer  $category_id  The id of the parent.
      * @param   string   $alias        The alias.
-     * @param   string   $name         The title.
+     * @param   string   $name         The name.
      *
-     * @return  array  Contains the modified title and alias.
+     * @return  array  Contains the modified name and alias.
      */
     protected function generateNewTitle($category_id, $alias, $name)
     {
-        // Alter the title & alias
+        // Alter the name & alias
         $table = $this->getTable();
 
         while ($table->load(array('alias' => $alias))) {
-            if ($name == $table->title) {
+            if ($name == $table->name) {
                 $name = \Joomla\String\StringHelper::increment($name);
             }
 
@@ -289,25 +289,25 @@ class BrandModel extends AdminModel
      * Copied from libraries/src/MVC/Model/AdminModel.php because it uses a hard-coded field name:
      * catid.
      *
-     * Method to change the title & alias.
+     * Method to change the name & alias.
      *
      * @param   string   $alias        The alias.
-     * @param   string   $title        The title.
+     * @param   string   $name        The name.
      *
-     * @return  array  Contains the modified title and alias.
+     * @return  array  Contains the modified name and alias.
      */
-    /*protected function generateNewBrandsTitle($alias, $title)
+    /*protected function generateNewBrandsTitle($alias, $name)
     {
-        // Alter the title & alias
+        // Alter the name & alias
         $table = $this->getTable();
 
         while ($table->load(array('alias' => $alias)))
         {
-            $title = StringHelper::increment($title);
+            $name = StringHelper::increment($name);
             $alias = StringHelper::increment($alias, 'dash');
         }
 
-        return array($title, $alias);
+        return array($name, $alias);
     }*/
 
 
