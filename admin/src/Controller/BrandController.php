@@ -15,9 +15,9 @@ use Joomla\CMS\Component\ComponentHelper;
 use Joomla\CMS\Factory;
 use Joomla\CMS\Filesystem\File;
 use Joomla\CMS\MVC\Controller\FormController;
-use Joomla\CMS\Versioning\VersionableControllerTrait;
-use Joomla\CMS\Uri\Uri;
 use Joomla\CMS\Table\Table;
+use Joomla\CMS\Uri\Uri;
+use Joomla\CMS\Versioning\VersionableControllerTrait;
 
 require_once dirname(dirname(__DIR__)) . '/vendor/autoload.php';
 
