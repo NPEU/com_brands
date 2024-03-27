@@ -14,6 +14,7 @@ defined('_JEXEC') or die;
 use Joomla\CMS\Component\ComponentHelper;
 use Joomla\CMS\Factory;
 use Joomla\CMS\Filesystem\File;
+use Joomla\CMS\Language\Text;
 use Joomla\CMS\MVC\Controller\FormController;
 use Joomla\CMS\Table\Table;
 use Joomla\CMS\Uri\Uri;
@@ -37,7 +38,7 @@ class BrandController extends FormController
     * @param array $data
     * @return bool
     */
-    protected function allowAdd($data = array())
+    protected function allowAdd($data = [])
     {
         return parent::allowAdd($data);
     }
@@ -49,7 +50,7 @@ class BrandController extends FormController
     * @param string $key
     * @return bool
     */
-    protected function allowEdit($data = array(), $key = 'id')
+    protected function allowEdit($data = [], $key = 'id')
     {
         $id = isset( $data[ $key ] ) ? $data[ $key ] : 0;
         if( !empty( $id ) )
@@ -81,7 +82,7 @@ class BrandController extends FormController
 
         ob_start();
         $tidy = new \tidy;
-        $config = array(
+        $config = [
             'indent' => $indent,
             'wrap' => 0,
             'clean' => true,
@@ -89,7 +90,7 @@ class BrandController extends FormController
             'input-xml' => true,
             'output-xml' => true,
             'newline' => 'LF'
-        );
+        ];
         $tidy->parseString($str, $config, 'utf8');
         $tidy->cleanRepair();
         $input = $tidy;
@@ -185,7 +186,7 @@ class BrandController extends FormController
         $prime = '\x{2032}\x{2033}\x{2034}\x{2057}';
         $nummodifiers = $numbersign . $percent . $prime;
         $return = preg_replace(
-        array(
+        [
             // Remove separator, control, formatting, surrogate,
             // open/close quotes.
             '/[\p{Z}\p{Cc}\p{Cf}\p{Cs}\p{Pi}\p{Pf}]/u',
@@ -205,7 +206,7 @@ class BrandController extends FormController
             '/((?<= )|^)\p{Pd}+(?![\p{N}\p{Sc}])/u',
             // Remove consecutive spaces
             '/ +/',
-            ), ' ', $text);
+        ], ' ', $text);
         $return = str_replace('/', '_', $return);
         return str_replace("'", '', $return);
     }
@@ -248,10 +249,8 @@ class BrandController extends FormController
         $control   = $form->getFormControl();
         $files     = $app->input->files->get($control);
         $params    = clone ComponentHelper::getParams($option);
-        $data      = $app->input->post->get($control, array(), 'array');
+        $data      = $app->input->post->get($control, [], 'array');
         $view_item = $this->view_item;
-
-        //echo '<pre>'; var_dump($data); echo '</pre>'; exit;
 
         $upload_folder_permissions = octdec($params->get('upload_folder_permissions', false));
         $upload_file_permissions = octdec($params->get('upload_file_permissions', false));
@@ -295,7 +294,9 @@ class BrandController extends FormController
 
         // Set some defaults 0 J4 throws model error otherwise and adding empty defaults to the form
         // doesn't seem to help:
-        $data['favicon_zip_path'] = '';
+        if (!isset($data['favicon_zip_path'])) {
+            $data['favicon_zip_path'] = '';
+        }
 
         // Process SVG:
         if(!empty($data['logo_svg'])) {
@@ -332,7 +333,7 @@ class BrandController extends FormController
                 return false;
 
             } else {
-                $svg_errors = array();
+                $svg_errors = [];
                 $svg_doc = $image->getDocument();
 
 
@@ -646,7 +647,7 @@ class BrandController extends FormController
                     }
 
                     // Unzip to folder:
-                    $zip = new ZipArchive;
+                    $zip = new \ZipArchive;
                     if ($zip->open($dest) === true) {
                         for($i = 0; $i < $zip->numFiles; $i++) {
                             $filename = $zip->getNameIndex($i);
@@ -753,7 +754,7 @@ class BrandController extends FormController
                     return false;
 
                 } else {
-                    $svg_errors = array();
+                    $svg_errors = [];
                     $svg_doc = $image->getDocument();
 
 
@@ -915,7 +916,7 @@ class BrandController extends FormController
                         curl_setopt($ch, CURLOPT_POST, true);
                         curl_setopt($ch, CURLOPT_POSTFIELDS, $favicon_json);
                         //curl_setopt($ch, CURLOPT_SSL_VERIFYPEER, 0);
-                        curl_setopt($ch, CURLOPT_HTTPHEADER, array('Content-Type:application/json'));
+                        curl_setopt($ch, CURLOPT_HTTPHEADER, ['Content-Type:application/json']);
 
                         //So that curl_exec returns the contents of the cURL; rather than echoing it
                         curl_setopt($ch, CURLOPT_RETURNTRANSFER, true);
@@ -967,7 +968,7 @@ class BrandController extends FormController
 
 
                         // Unzip to folder:
-                        $zip = new ZipArchive;
+                        $zip = new \ZipArchive;
                         if ($zip->open($dest) === true) {
                             for($i = 0; $i < $zip->numFiles; $i++) {
                                 $filename = $zip->getNameIndex($i);
