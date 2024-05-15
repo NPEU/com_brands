@@ -9,7 +9,7 @@
     <copyright>(C) NPEU 2019</copyright>
     <license>MIT License; see LICENSE.md</license>
 
-    <version>2.12.0</version>
+    <version>4.0.1</version>
     <description>COM_BRANDS_DESCRIPTION</description>
 
     <namespace path="src">NPEU\Component\Brands</namespace>
@@ -34,13 +34,6 @@
         </schemas>
     </update>
 
-    <files folder="site">
-        <folder>forms</folder>
-        <folder>language</folder>
-        <folder>src</folder>
-        <folder>tmpl</folder>
-    </files>
-
     <administration>
         <menu>COM_BRANDS_MENU</menu>
         <submenu>
@@ -61,6 +54,7 @@
             <folder>sql</folder>
             <folder>src</folder>
             <folder>tmpl</folder>
+            <folder>vendor</folder>
         </files>
     </administration>
 
