@@ -720,7 +720,8 @@ class BrandController extends FormController
         } elseif(isset($data['upload_favicons']) && $data['upload_favicons'] === '0') {
 
             // Process icon SVG:
-            if(!empty($data['icon_svg'])) {
+            #echo '<pre>'; var_dump($old_data->icon_svg); echo '</pre>'; exit;
+            if(!empty($data['icon_svg']) && $data['icon_svg'] != $old_data->icon_svg) {
                 $svg = $data['icon_svg'];
 
                 // Illustrator adds 'xml:space="preserve"'. It's easier to remove this as a string:
