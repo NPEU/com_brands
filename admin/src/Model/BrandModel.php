@@ -12,20 +12,11 @@ namespace NPEU\Component\Brands\Administrator\Model;
 defined('_JEXEC') or die;
 
 
-use Joomla\CMS\MVC\Model\AdminModel;
 use Joomla\CMS\Application\ApplicationHelper;
-#use Joomla\String\StringHelper;
+use Joomla\CMS\Component\ComponentHelper;
 use Joomla\CMS\Factory;
-#use Joomla\Registry\Registry;
-#use Joomla\CMS\Form\Form;
-#use Joomla\Component\Categories\Administrator\Helper\CategoriesHelper;
-#use Joomla\CMS\Language\Associations;
-#use Joomla\CMS\Language\LanguageHelper;
 use Joomla\CMS\Language\Text;
-#use Joomla\CMS\Versioning\VersionableModelTrait;
-#use Joomla\CMS\Helper\TagsHelper;
-#use Joomla\CMS\UCM\UCMType;
-
+use Joomla\CMS\MVC\Model\AdminModel;
 
 
 /**
@@ -55,16 +46,16 @@ class BrandModel extends AdminModel
      *
      * @return  mixed    A JForm object on success, false on failure
      */
-    public function getForm($data = array(), $loadData = true)
+    public function getForm($data = [], $loadData = true)
     {
         // Get the form.
         $form = $this->loadForm(
             'com_brands.brand',
             'brand',
-            array(
+            [
                 'control' => 'jform',
                 'load_data' => $loadData
-            )
+            ]
         );
 
         if (empty($form)) {
@@ -98,7 +89,7 @@ class BrandModel extends AdminModel
         // Check the session for previously entered form data.
         $data = Factory::getApplication()->getUserState(
             'com_brands.edit.brand.data',
-            array()
+            []
         );
 
         if (empty($data)) {
@@ -201,6 +192,8 @@ class BrandModel extends AdminModel
      */
     public function save($data)
     {
+        #echo 'data<pre>'; var_dump($data); echo '</pre>'; exit;
+
         $is_new = empty($data['id']);
         $app    = Factory::getApplication();
         $input  = $app->input;
@@ -208,7 +201,7 @@ class BrandModel extends AdminModel
 
         // Get parameters:
         #$params = \Joomla\CMS\Component\ComponentHelper::getParams(JRequest::getVar('option'));
-        $params = \Joomla\CMS\Component\ComponentHelper::getParams($input->get('option'));
+        $params = ComponentHelper::getParams($input->get('option'));
 
         // For reference if needed:
         // By default we're only looking for and acting upon the 'email admins' setting.
@@ -234,7 +227,7 @@ class BrandModel extends AdminModel
 
         // Automatic handling of alias for empty fields
         // Taken from com_content/models/article.php
-        if (in_array($input->get('task'), array('apply', 'save', 'save2new'))) {
+        if (in_array($input->get('task'), ['apply', 'save', 'save2new'])) {
             if (empty($data['alias'])) {
                 if (Factory::getConfig()->get('unicodeslugs') == 1) {
                     $data['alias'] = \Joomla\CMS\Filter\OutputFilter::stringURLUnicodeSlug($data['name']);
@@ -244,7 +237,7 @@ class BrandModel extends AdminModel
 
                 $table = $this->getMVCFactory()->createTable('Brand', 'Administrator');
 
-                if ($table->load(array('alias' => $data['alias']))) {
+                if ($table->load(['alias' => $data['alias']])) {
                     $msg = \Joomla\CMSanguage\Text::_('COM_CONTENT_SAVE_WARNING');
                 }
 
@@ -274,7 +267,7 @@ class BrandModel extends AdminModel
         // Alter the name & alias
         $table = $this->getTable();
 
-        while ($table->load(array('alias' => $alias))) {
+        while ($table->load(['alias' => $alias])) {
             if ($name == $table->name) {
                 $name = \Joomla\String\StringHelper::increment($name);
             }
@@ -282,7 +275,7 @@ class BrandModel extends AdminModel
             $alias = \Joomla\String\StringHelper::increment($alias, 'dash');
         }
 
-        return array($name, $alias);
+        return [$name, $alias];
     }
 
     /**
