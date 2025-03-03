@@ -123,7 +123,7 @@ class BrandsModel extends ListModel
 
         // Join the categories table again for the project group (delete if not using categories):
         $query->select('c.title AS category_title')
-            ->join('LEFT', $db->quoteName('#__categories', 'c') . ' ON ' . $db->qn('c.id') . ' = ' . $db->qn('a.catid'));
+            ->join('LEFT', $db->quoteName('#__categories', 'c') . ' ON ' . $db->quoteName('c.id') . ' = ' . $db->quoteName('a.catid'));
 
         // Join over the users for the checked out user.
         $query->select('uc.name AS editor')
